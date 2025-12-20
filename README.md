@@ -76,7 +76,8 @@ src/
 
 ### 📁 Folder & File Naming Conventions
 
-### 📁 Folder, File, and Comment Naming Conventions
+These naming conventions are designed to improve readability, make files and code easier to recognize, and help developers quickly understand the project structure without needing extra context.
+
 
 | Category | Rule | Example / Notes |
 |---------|------|------------------|
