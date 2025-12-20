@@ -1,6 +1,6 @@
 [Home](../../README.md) / Database Guide
 
-[Home](../../README.md) / Database Guide
+**[Home](../../README.md)** / Database Guide
 
 [← Back to Home](../../README.md)
 
