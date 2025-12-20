@@ -86,11 +86,16 @@ We include pgAdmin so you can view, edit, and browse your database visually, sim
 
 3. Fill the details
 **General tab**
-| Name | express-postgres|
+| Name |
+|------|
+| express-postgres |
+
 
 **Connection tab**
-| Field	| Value |
-| Host name / Address |	postgres
+| Field | Value |
+|------|-------|
+| Host name / Address | postgres |
 | Port | 5432 |
 | Username | admin |
 | Password | admin |
+
