@@ -78,8 +78,8 @@ We include pgAdmin so you can view, edit, and browse your database visually, sim
 
 1. Open pgAdmin:
 http://localhost:5050
-&nbsp;
-Login using credentials from docker-compose.yml:<br>
+</br>
+Login using credentials from docker-compose.yml:</br>
 Email:    admin@docker.com
 Password: lorem_ipsum
 <br>
