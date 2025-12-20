@@ -94,6 +94,17 @@ src/
 | **Comments** | Keep comments clear and concise | Short, readable explanations |
 | | Lowercase comments are allowed | Maintain consistency across the codebase |
 | | Semicolons may separate related ideas | `// enable cache; improves performance` |
+| **Variables** | Use explicit, descriptive names | `userId`, `isActive`, `authToken` |
+| | Avoid unclear single-letter names | Avoid `x`, `e` in business logic |
+| | Short names allowed in limited scope | `i` in loops, `item` in callbacks |
+| **Functions** | Use camelCase | `createUser()`, `getUserById()` |
+| | Use verbs for actions | `validateInput()`, `fetchUsers()` |
+| **Classes** | Use PascalCase | `UserController`, `AuthService` |
+| | One class per responsibility | Avoid generic names like `Manager` |
+| **Types & Interfaces** | Use PascalCase | `User`, `CreateUserDto` |
+| **Constants** | Use UPPER_SNAKE_CASE | `MAX_RETRY_COUNT`, `DEFAULT_TIMEOUT` |
+| **Unused Parameters** | Prefix with underscore (`_`) | `_req`, `_res`, `_next` |
+
 
 
 
