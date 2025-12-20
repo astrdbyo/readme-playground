@@ -11,6 +11,8 @@ Request → Routes → Controller → Service → Repository → Database
 
 </div>
 
+<br>
+
 > [!TIP]
 > A quick tip to help you understand and work with this project more easily.
 
