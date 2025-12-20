@@ -27,6 +27,9 @@ Request → Routes → Controller → Service → Repository → Database
 
 ### 🪴 Project Structure
 
+This section provides an overview of how the project is organized, helping you quickly understand where each part of the code lives and how the application is structured.
+
+
 ```sh
 .github/                    # GitHub workflows, actions
 src/
