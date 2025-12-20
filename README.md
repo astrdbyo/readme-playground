@@ -87,11 +87,10 @@ src/
 | **Database Schema** | Use singular names | `user.schema.ts`, `role.schema.ts` |
 | | Group complex domains in subfolders | `user/user.schema.ts` |
 | **File Naming** | Always lowercase | `auth.middleware.ts`, `user.svc.ts` |
-| | Use descriptive suffixes based on responsibility | `.controller.ts`, `.svc.ts`, `.repository.ts` |
+| | Use descriptive suffixes based on responsibility | `.controller.ts`, `.util.ts`, `.repository.ts` |
 | | Use `svc` suffix for services | `user.svc.ts` |
-| | Use folder-based suffix for clarity | `auth.middleware.ts` |
-| | Helper files may use descriptive hyphenated names | `app-helper.ts` |
-| | Avoid excessive `index.ts` usage | Prefer explicit filenames |
+| | Use hyphens only when file names become too long | `app-helper.ts` |
+| | Avoid excessive `index.ts` usage | `index.swagger.ts` |
 | **Comments** | Keep comments clear and concise | Short, readable explanations |
 | | Lowercase comments are allowed | Maintain consistency across the codebase |
 | | Semicolons may separate related ideas | `// enable cache; improves performance` |
