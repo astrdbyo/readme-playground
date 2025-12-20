@@ -74,14 +74,27 @@ src/
 
 ### Naming Conventions
 
+### 📁 Folder & File Naming Conventions
+
+### 📁 Folder, File, and Comment Naming Conventions
+
 | Category | Rule | Example / Notes |
 |---------|------|------------------|
 | **Folder Naming** | Always plural | `controllers/`, `services/`, `repositories/` |
 | | Always lowercase | `database/`, `middleware/` |
 | | Use hyphens for multi-word names | `user-profile/`, `auth-service/` |
-| | Foundational (non-domain) modules go here | `lib/`, `middleware/`, `database/` |
+| | Shared, non-domain modules go here | `lib/` |
 | **Database Schema** | Use singular names | `user.schema.ts`, `role.schema.ts` |
 | | Group complex domains in subfolders | `user/user.schema.ts` |
-| **File Naming** | Use descriptive suffixes | `user.service.ts`, `auth.controller.ts` |
-| | Avoid excessive `index.ts` usage | Prefer explicit filenames for clarity |
+| **File Naming** | Always lowercase | `auth.middleware.ts`, `user.svc.ts` |
+| | Use descriptive suffixes based on responsibility | `.controller.ts`, `.svc.ts`, `.repository.ts` |
+| | Use `svc` suffix for services | `user.svc.ts` |
+| | Use folder-based suffix for clarity | `auth.middleware.ts` |
+| | Helper files may use descriptive hyphenated names | `app-helper.ts` |
+| | Avoid excessive `index.ts` usage | Prefer explicit filenames |
+| **Comments** | Keep comments clear and concise | Short, readable explanations |
+| | Lowercase comments are allowed | Maintain consistency across the codebase |
+| | Semicolons may separate related ideas | `// enable cache; improves performance` |
+
+
 
