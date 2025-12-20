@@ -2,6 +2,8 @@
 
 [← Back to Home](../../README.md)
 
+[← Back to Main README](../../README.md)
+
 ## 📘 Database Setup & Management Guide
 
 This project uses Drizzle ORM as the SQL toolkit and migration system. It was chosen because:
