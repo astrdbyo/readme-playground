@@ -14,7 +14,6 @@ This project uses Drizzle ORM as the SQL toolkit and migration system. It was ch
 
 2. Generate migration files
 <br>
-&nbsp;
 
 ```sh
    pnpm db:generate
