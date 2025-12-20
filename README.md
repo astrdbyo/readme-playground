@@ -2,8 +2,8 @@
 
 ## 📘 Architecture Overview
 
-This project follows a layered architecture to keep concerns separated, improve maintainability, and make the codebase easy to scale
-At a high level, the request flow is:
+This project follows a layered architecture to keep concerns separated, improve maintainability, and make the codebase easy to scale.<br>
+At a high level, the request flow is: <br>
 Request → Routes → Controller → Service → Repository → Database
 
 ### Project Structure
