@@ -19,8 +19,10 @@ Request → Routes → Controller → Service → Repository → Database
 
 1. Review the scripts in `package.json`, as some of them are already set up to make your work easier.
 2. Run all tests before committing to reduce the risk of bugs or failed deployments.
-3. Log files are generated only in the production environment. See the initial setup documentation for activation details.
+3. Log files are generated only in production. See the `initial setup` docs to enable them.
+4. Follow the [Naming Conventions](#naming-conventions) to maintain consistency and improve readability.
 
+<br>
 <br>
 
 ### Project Structure
@@ -69,3 +71,6 @@ src/
 └── server.ts               # HTTP server bootstrap
 
 ````
+
+### Naming Conventions
+
