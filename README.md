@@ -85,6 +85,7 @@ We include pgAdmin so you can view, edit, and browse your database visually, sim
    - 🔧 Servers → Register → Server
 
 3. Fill the details
+   
 **General tab**
 | Field | Value |
 |-------|-------|
