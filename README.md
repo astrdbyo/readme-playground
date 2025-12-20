@@ -14,6 +14,12 @@ Request → Routes → Controller → Service → Repository → Database
 > [!TIP]
 > A quick tip to help you understand and work with this project more easily.
 
+1. Review the scripts in `package.json`, as some of them are already set up to make your work easier.
+2. Run all tests before committing to reduce the risk of bugs or failed deployments.
+3. Log files are generated only in the production environment. See the initial setup documentation for activation details.
+
+
+
 
 ### Project Structure
 
