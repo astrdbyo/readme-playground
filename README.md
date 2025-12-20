@@ -18,8 +18,7 @@ Request → Routes → Controller → Service → Repository → Database
 2. Run all tests before committing to reduce the risk of bugs or failed deployments.
 3. Log files are generated only in the production environment. See the initial setup documentation for activation details.
 
-
-
+<br>
 
 ### Project Structure
 
