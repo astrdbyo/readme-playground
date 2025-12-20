@@ -11,9 +11,6 @@ Request → Routes → Controller → Service → Repository → Database
 
 </div>
 
-- [ ] \(Optional) Open a followup issue
-
-
 ### Project Structure
 
 ```sh
