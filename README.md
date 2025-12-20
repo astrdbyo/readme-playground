@@ -76,12 +76,10 @@ If you prefer visual modeling, you can also recreate or extend this ERD using to
 
 We include pgAdmin so you can view, edit, and browse your database visually, similar to a GUI client.
 
-1. Open pgAdmin:
-http://localhost:5050
-</br>
-Login using credentials from docker-compose.yml:</br>
-Email:    admin@docker.com
-Password: lorem_ipsum
+1. Open pgAdmin: http://localhost:5050
+   - Login using credentials from docker-compose.yml:</br>
+      - Email:    admin@docker.com
+      - Password: lorem_ipsum
 <br>
 
 3. Register a new server
