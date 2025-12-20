@@ -82,7 +82,7 @@ We include pgAdmin so you can view, edit, and browse your database visually, sim
       - Password: lorem_ipsum
         
 2. Register a new server
-🔧 Servers → Register → Server
+   - 🔧 Servers → Register → Server
 
 3. Fill the details
 **General tab**
