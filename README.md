@@ -1,104 +1,54 @@
 [← Back to Main README](../../README.md)
 
-## 📘 Database Setup & Management Guide
+## 📘 Architecture Overview
 
-This project uses Drizzle ORM as the SQL toolkit and migration system. It was chosen because:
-- ⚡ Faster than Prisma
-- 🧩 Schema structure similar to Sequelize models
-- 🧱 Simple & predictable migrations
-- 🛡️ Safe environment loader (app will not crash even if DB is missing)
-- 🚀 Clear workflow for schema → migration → database
+This project follows a layered architecture to keep concerns separated, improve maintainability, and make the codebase easy to scale
+At a high level, the request flow is:
+Request → Routes → Controller → Service → Repository → Database
 
-### 🛠 Drizzle Workflow
-
-1. Create schema
-   Write your table definitions in src/database/schema/.
-
-2. Generate migration files
-&nbsp;
+### Project Structure
 
 ```sh
-   pnpm db:generate
-```
+.github/                    # GitHub workflows, templates, CI/CD configs
+src/
+├── controllers/            # HTTP request handlers (API layer)
+│   ├── v1/                 # Version 1 API controllers
+│   └── v2/                 # Version 2 API controllers (future-safe)
+│
+├── database/               # Database-related logic & configuration
+│   ├── migrations/         # Database migrations
+│   ├── schema/             # Database schema definitions
+│   ├── scripts/            # Utility scripts (DB setup, maintenance)
+│   ├── seeders/            # Seed data for development/testing
+│   ├── db-connection.ts    # Database connection setup
+│   ├── drizzle-config.js   # Drizzle ORM configuration for npm, pnpm
+│   └── drizzle-config.ts   # Drizzle ORM configuration for bun
+│
+├── lib/                    # Shared libraries and reusable modules
+│   ├── assets/             # Static or shared assets
+│   ├── helper/             # Helper functions
+│   ├── logs/               # Logging utilities and configuration
+│   ├── swagger/            # Swagger / OpenAPI documentation setup
+│   ├── types/              # Global TypeScript types and interfaces
+│   ├── utils/              # Generic utility functions
+│   └── validations/        # Request Zod validation schemas
+│
+├── middleware/             # Express middleware (auth, error handling, etc.)
+│
+├── repositories/           # Data access layer (DB queries)
+│
+├── routes/                 # API route definitions and versioning
+│
+├── services/               # Business logic layer
+│
+├── test/                   # Automated tests
+│   ├── factories/          # Test data factories
+│   ├── integration/        # Integration tests
+│   ├── repositories/       # Repository-level tests
+│   ├── setup/              # Test environment setup
+│   └── unit/               # Unit tests
+│
+├── main.ts                 # Application entry point
+└── server.ts               # HTTP server bootstrap
 
-3. Apply migration to the database
-&nbsp;
-
-```sh
-pnpm db:migrate
-```
-
-4. Run seeders
-&nbsp;
-
-```sh
-pnpm db:seed --file=roles
-pnpm db:seed --file=users
-pnpm db:seed --file=20251126T120612.roles.seed.ts
-```
-
-
-### ♻️ Database Reset
-
-When running:
-&nbsp;
-
-```sh
-pnpm db:reset
-```
-This will drop & recreate your schema.
-<br>
-After resetting, always re-run:
-&nbsp;
-
-```sh
-pnpm db:generate
-```
-&nbsp;
-Otherwise Drizzle will not regenerate fresh SQL migration files
-
-### 🧱 RDBMS Design (ERD)
-We provide a sample mockup database design to illustrate a clean and scalable relational structure. This example helps guide your development process, especially as your application grows into a larger and more complex system.
-If you prefer visual modeling, you can also recreate or extend this ERD using tools like **Lucidchart**, which makes planning and scaling your database architecture much easier
-<br>
-
-```sh
-┌──────────────┐           ┌────────────────┐
-│    roles     │ 1       ∞ │     users      │
-├──────────────┤───────────┤────────────────┤
-│ id (uuid)    │           │ id (uuid)      │
-│ name (text)  │           │ full_name      │
-│ admin        │           │ email          │
-│ user         │           │ password       │
-│              │           │ role_id (uuid) │ (FK → roles.id)
-└──────────────┘           └────────────────┘
-```
-
-### 🌐 pgAdmin Setup
-
-We include pgAdmin so you can view, edit, and browse your database visually, similar to a GUI client.
-
-1. Open pgAdmin: http://localhost:5050
-   - Login using credentials from docker-compose.yml:</br>
-      - Email:    admin@docker.com
-      - Password: lorem_ipsum
-        
-2. Register a new server
-   - 🔧 Servers → Register → Server
-
-3. Fill the details
-   
-**General tab**
-| Field | Value |
-|-------|-------|
-| Name | express-postgres |
-
-
-**Connection tab**
-| Field | Value |
-|------|-------|
-| Host name / Address | postgres |
-| Port | 5432 |
-| Username | admin |
-| Password | admin |
-
+````
