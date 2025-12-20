@@ -74,3 +74,14 @@ src/
 
 ### Naming Conventions
 
+| Category | Rule | Example / Notes |
+|---------|------|------------------|
+| **Folder Naming** | Always plural | `controllers/`, `services/`, `repositories/` |
+| | Always lowercase | `database/`, `middleware/` |
+| | Use hyphens for multi-word names | `user-profile/`, `auth-service/` |
+| | Foundational (non-domain) modules go here | `lib/`, `middleware/`, `database/` |
+| **Database Schema** | Use singular names | `user.schema.ts`, `role.schema.ts` |
+| | Group complex domains in subfolders | `user/user.schema.ts` |
+| **File Naming** | Use descriptive suffixes | `user.service.ts`, `auth.controller.ts` |
+| | Avoid excessive `index.ts` usage | Prefer explicit filenames for clarity |
+
