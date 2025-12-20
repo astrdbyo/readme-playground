@@ -78,16 +78,16 @@ We include pgAdmin so you can view, edit, and browse your database visually, sim
 
 1. Open pgAdmin:
 http://localhost:5050
-<br>
-Login using credentials from docker-compose.yml:
+&nbsp;
+Login using credentials from docker-compose.yml:<br>
 Email:    admin@docker.com
 Password: lorem_ipsum
 <br>
 
-2. Register a new server
+3. Register a new server
 🔧 Servers → Register → Server
 
-3. Fill the details
+4. Fill the details
 **General tab**
 | Name | express-postgres|
 
