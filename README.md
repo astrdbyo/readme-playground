@@ -14,11 +14,11 @@ Request → Routes → Controller → Service → Repository → Database
 ### Project Structure
 
 ```sh
-.github/                    # GitHub workflows, templates, CI/CD configs
+.github/                    # GitHub workflows, actions
 src/
 ├── controllers/            # HTTP request handlers (API layer)
-│   ├── v1/                 # Version 1 API controllers
-│   └── v2/                 # Version 2 API controllers (future-safe)
+│   ├── v1/                
+│   └── v2/                 
 │
 ├── database/               # Database-related logic & configuration
 │   ├── migrations/         # Database migrations
@@ -32,7 +32,7 @@ src/
 ├── lib/                    # Shared libraries and reusable modules
 │   ├── assets/             # Static or shared assets
 │   ├── helper/             # Helper functions
-│   ├── logs/               # Logging utilities and configuration
+│   ├── logs/               # Application logs
 │   ├── swagger/            # Swagger / OpenAPI documentation setup
 │   ├── types/              # Global TypeScript types and interfaces
 │   ├── utils/              # Generic utility functions
@@ -51,7 +51,7 @@ src/
 │   ├── integration/        # Integration tests
 │   ├── repositories/       # Repository-level tests
 │   ├── setup/              # Test environment setup
-│   └── unit/               # Unit tests
+│   └── unit/               # Logic tests
 │
 ├── main.ts                 # Application entry point
 └── server.ts               # HTTP server bootstrap
