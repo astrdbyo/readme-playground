@@ -25,7 +25,7 @@ Request → Routes → Controller → Service → Repository → Database
 <br>
 <br>
 
-### Project Structure
+### 🪴 Project Structure
 
 ```sh
 .github/                    # GitHub workflows, actions
@@ -72,9 +72,7 @@ src/
 
 ````
 
-### Naming Conventions
-
-### 📁 Folder & File Naming Conventions
+### 🎫 Naming Conventions
 
 These naming conventions are designed to improve readability, make files and code easier to recognize, and help developers quickly understand the project structure without needing extra context.
 
