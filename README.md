@@ -1,4 +1,4 @@
-[← Back to Main README](../../README.md)
+  [← Back to Main README](../../README.md)
 
 ## 📘 Architecture Overview
 
@@ -101,9 +101,14 @@ src/
 | | Use verbs for actions | `validateInput()`, `fetchUsers()` |
 | **Classes** | Use PascalCase | `UserController`, `AuthService` |
 | | One class per responsibility | Avoid generic names like `Manager` |
-| **Types & Interfaces** | Use PascalCase | `User`, `CreateUserDto` |
+| **Types & Interfaces** | Use PascalCase | `RegisterUserDTO`, `RoleCode` |
+| | Prefix interfaces with `I` | `IUserPublic`, `IUserPrivate` |
+| | Use semantic suffixes for types | `DTO`, `Payload`, `Code`, `Response` |
 | **Constants** | Use UPPER_SNAKE_CASE | `MAX_RETRY_COUNT`, `DEFAULT_TIMEOUT` |
 | **Unused Parameters** | Prefix with underscore (`_`) | `_req`, `_res`, `_next` |
+
+
+
 
 
 
