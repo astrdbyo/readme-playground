@@ -86,9 +86,9 @@ We include pgAdmin so you can view, edit, and browse your database visually, sim
 
 3. Fill the details
 **General tab**
-| Name |
-|------|
-| express-postgres |
+| Field | Value |
+|-------|-------|
+| Name | express-postgres |
 
 
 **Connection tab**
