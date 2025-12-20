@@ -1,7 +1,3 @@
-[Home](../../README.md) / Database Guide
-
-[← Back to Home](../../README.md)
-
 [← Back to Main README](../../README.md)
 
 ## 📘 Database Setup & Management Guide
