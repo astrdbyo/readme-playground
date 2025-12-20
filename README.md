@@ -4,8 +4,12 @@
 
 This project follows a layered architecture to keep concerns separated, improve maintainability, and make the codebase easy to scale.<br>
 
-At a high level, the request flow is: <br>
+<div align="center">
+**When a request comes in, it goes through these layers**<br/>
 Request → Routes → Controller → Service → Repository → Database
+</div>
+
+
 
 ### Project Structure
 
