@@ -22,7 +22,6 @@ This approach helps to:
 - Simplify future changes to response structure
 - Reduce duplicated logic in controllers
 
----
 
 ### ⚙️ Controller Usage
 
