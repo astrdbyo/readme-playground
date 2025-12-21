@@ -1,8 +1,8 @@
 [← Back to Main README](../../README.md)
 
-## API Layer Overview
+## ⛓️‍💥 API Layer Overview
 
-### Controller-Based API Versioning
+### 🎲 Controller-Based API Versioning
 
 ```sh
 src/
@@ -54,3 +54,11 @@ All response formatting logic is centralized in:
 ```txt
 src/lib/utils/response.util.ts
 ```
+
+If you need to:
+- Adjust the response structure
+- Add or remove fields
+- Modify metadata or error format
+👉 **Update the implementation in** `response.util.ts`, not inside controllers.
+
+This ensures consistent behavior across all endpoints and API versions
