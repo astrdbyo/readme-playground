@@ -59,7 +59,6 @@ If you need to:
 - Adjust the response structure
 - Add or remove fields
 - Modify metadata or error format
-<br>
-👉 **Update the implementation in** `response.util.ts`, not inside controllers.
+<br>👉 **Update the implementation in** `response.util.ts`, not inside controllers.
 
 This ensures consistent behavior across all endpoints and API versions
