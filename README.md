@@ -1,11 +1,9 @@
-# CI / CD Workflow Guide
+## CI / CD Workflow Guide
 
 This document explains **why these workflows exist**, **what each one does**, and **how to use them**.  
 It is written for future reference, so you do not need to re-learn the entire CI/CD concept again.
 
----
-
-## Purpose
+### Purpose
 
 This repository uses **GitHub Actions** to automate the full software delivery lifecycle:
 
@@ -20,5 +18,22 @@ Nothing is automatic in production by design.
 
 ---
 
-## Workflow Overview
+### Workflow Overview
 
+```sh
+Developer → Pull Request
+↓
+01 - Pre-Merge Code Validation Checks
+↓
+Merge to staging
+↓
+02 - Build & Publish Image to GHCR (staging + SHA)
+↓
+03 - Deploy to Staging
+↓
+Manual approval
+↓
+04 - Deploy to Production
+↓
+05 - Create Production Release
+```
