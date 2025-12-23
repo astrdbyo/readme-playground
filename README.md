@@ -1,9 +1,9 @@
-## CI / CD Workflow Guide
+## ⚡️ CI / CD Workflow Guide
 
 This document explains **why these workflows exist**, **what each one does**, and **how to use them**.  
 It is written for future reference, so you do not need to re-learn the entire CI/CD concept again.
 
-### Purpose
+### 🎯 Purpose
 
 This repository uses **GitHub Actions** to automate the full software delivery lifecycle:
 
@@ -16,7 +16,7 @@ This repository uses **GitHub Actions** to automate the full software delivery l
 Each step has **one responsibility only**.  
 Nothing is automatic in production by design.
 
-### Workflow Overview
+### 🧬 Workflow Overview
 
 ```sh
 Developer → Pull Request
@@ -147,7 +147,7 @@ Record **what was released** and **when**.
 - Clear audit trail
 - Human-readable release history
 
-## Key Principles
+## ⭐️ Key Principles
 
 - **CI ≠ Deployment**
 - **Build once, deploy many times**
@@ -155,7 +155,7 @@ Record **what was released** and **when**.
 - **SHA = truth**
 - **One workflow = one responsibility**
 
-## When to Use Which Workflow
+### 📌 When to Use Which Workflow
 
 | Situation | Workflow |
 |--------|--------|
