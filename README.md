@@ -36,6 +36,9 @@ Manual approval
 05 - Create Production Release
 ```
 
+<br>
+<br>
+
 > [!TIP]
 > A quick tip to help you understand and work with this project more easily.
 
@@ -144,8 +147,6 @@ Record **what was released** and **when**.
 - Clear audit trail
 - Human-readable release history
 
----
-
 ## Key Principles
 
 - **CI ≠ Deployment**
@@ -153,8 +154,6 @@ Record **what was released** and **when**.
 - **Production is always manual**
 - **SHA = truth**
 - **One workflow = one responsibility**
-
----
 
 ## When to Use Which Workflow
 
@@ -165,13 +164,3 @@ Record **what was released** and **when**.
 | Test runtime | 03 |
 | Go live | 04 |
 | Record release | 05 |
-
----
-
-## Final Notes
-
-This setup is:
-- Beginner-friendly
-- Production-safe
-- Industry-aligned
-- Easy to maintain
