@@ -14,6 +14,7 @@ Structured for clarity, maintainability, and fast onboarding.
 [![Node][Node.js]][Node-url]
 [![TypeScript][TypeScript.js]][TypeScript-url]
 [![Express][Express.js]][Express-url]
+[![Next][Next.js]][Next-url]
 [![PNPM][PNPM.js]][PNPM-url]
 [![Docker][Docker.js]][Docker-url]
 [![Postgres][Postgres.js]][Postgres-url]
@@ -28,27 +29,25 @@ Simply **clone → init → start building**.
 
 ### 🧩 Key Features
 
-- **Enterprise-ready monorepo architecture**
+- **Enterprise monorepo architecture**
   - Clear separation between `apps/` and `packages/`
-  - Shared tooling and consistent standards
-- **Packages-based repository layer**
-  - Database repositories are implemented as reusable workspace packages
-  - Applications consume repositories via package imports (e.g. `@repo/...`)
+  - Shared tooling and consistent standards across all modules
+- **Microservice-ready foundation**
+  - Supports multiple deployable applications under `apps/`
+  - Shared packages reduce duplication and enforce consistency
 - **Layered backend design**
   - Request → Routes → Controller → Service → Repository → Database
-- **Service / Repository pattern**
-  - Services are business-logic-only (DTO contracts)
-  - Repositories are the only layer allowed to touch ORM/SQL
-- **Standardized API response format**
-  - Unified success, list, and error structures
-  - Built-in request id for easier tracing and debugging
-- **Validation-first request handling**
-  - Zod schemas at route level
-  - Controllers trust validated payloads
-- **Production-grade operational defaults**
+- **Clean service boundaries**
+  - Services use DTO contracts only (ORM-agnostic)
+  - Repositories handle ORM/SQL access via workspace packages
+- **Standardized API behavior**
+  - Unified success, list, and error responses
+  - Request id included for easier tracing and debugging
+- **Production-grade defaults**
+  - Zod validation at route level
   - Docker-ready workflows
   - Environment-based configuration (dev/staging/prod/test)
-  - Centralized logging & error handling
+  - Centralized logging and error handling
 - **Built for teams**
   - Predictable patterns
   - Fast onboarding
@@ -88,25 +87,20 @@ docs/                     # documentation (architecture, setup, operations)
 
 ```
 
+
 [Node.js]: https://img.shields.io/badge/Node.js-000000?style=for-the-badge&logo=node.js&logoColor=white
 [Node-url]: https://nodejs.org
-
 [TypeScript.js]: https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white
 [TypeScript-url]: https://www.typescriptlang.org
-
 [Express.js]: https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white
 [Express-url]: https://expressjs.com
-
+[Next.js]: https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white
+[Next-url]: https://nextjs.org
 [PNPM.js]: https://img.shields.io/badge/PNPM-F69220?style=for-the-badge&logo=pnpm&logoColor=white
 [PNPM-url]: https://pnpm.io
-
 [Docker.js]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
 [Docker-url]: https://www.docker.com
-
 [Postgres.js]: https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white
 [Postgres-url]: https://www.postgresql.org
-
 [Redis.js]: https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white
 [Redis-url]: https://redis.io
-
-
