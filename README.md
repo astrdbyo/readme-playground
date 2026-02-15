@@ -4,10 +4,10 @@
   <img src="docs/assets/header.png" alt="Banner" />
 </p>
 
-# Enterprise Backend Monorepo (Node.js + TypeScript)
+# Intcrews Hub Monorepo
 
-A production-ready **monorepo backend** designed for internal engineering teams and scalable enterprise usage.  
-Structured for clarity, long-term maintainability, and fast onboarding.
+A production-ready **enterprise monorepo** containing both frontend and backend applications, designed for internal engineering teams and scalable long-term usage.  
+Structured for clarity, maintainability, and fast onboarding. 
 
 ### Built With
 
