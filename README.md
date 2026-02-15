@@ -1,8 +1,8 @@
 <div align="center">
 
-<p align="center">
+<!-- <p align="center">
   <img src="docs/assets/header.png" alt="Banner" />
-</p>
+</p> -->
 
 # Intcrews Hub Monorepo
 
