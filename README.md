@@ -93,3 +93,26 @@ packages/                 # shared libraries (db repositories, shared modules)
 docs/                     # documentation (architecture, setup, operations)
 
 ```
+
+[Node.js]: https://img.shields.io/badge/Node.js-000000?style=for-the-badge&logo=node.js&logoColor=white
+[Node-url]: https://nodejs.org
+
+[TypeScript.js]: https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white
+[TypeScript-url]: https://www.typescriptlang.org
+
+[Express.js]: https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white
+[Express-url]: https://expressjs.com
+
+[PNPM.js]: https://img.shields.io/badge/PNPM-F69220?style=for-the-badge&logo=pnpm&logoColor=white
+[PNPM-url]: https://pnpm.io
+
+[Docker.js]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
+[Docker-url]: https://www.docker.com
+
+[Postgres.js]: https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white
+[Postgres-url]: https://www.postgresql.org
+
+[Redis.js]: https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white
+[Redis-url]: https://redis.io
+
+
