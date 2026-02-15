@@ -55,37 +55,12 @@ Simply **clone → init → start building**.
 
 ### 📚 Table of Contents
 
+- [Quick Start](#-quick-start)
+- [Development Rules](#-development-rules)
 - [Repository Overview](#-repository-overview)
 - [Monorepo Structure](#-monorepo-structure)
-- [Quick Start](#-quick-start)
 - [Docker](#-docker)
 - [Documentation](#-documentation)
-- [Development Rules](#-development-rules)
-- [Contributing](#-contributing)
-
-### 🧭 Repository Overview
-
-This is a monorepo that contains:
-
-- **Applications** (deployable runtimes)
-- **Shared packages** (database layer, validation, shared utilities, configs)
-- **Centralized tooling** (linting, formatting, TS configs, hooks)
-
-A key design decision in this repository is that the **repository layer lives in workspace packages**, not inside the application source folder.  
-This ensures the database access layer is:
-
-- reusable across multiple applications
-- consistent across the codebase
-- easier to test and maintain independently
-
-### 🗂 Monorepo Structure
-
-```txt
-apps/                     # deployable applications (runtime entry points)
-packages/                 # shared libraries (db repositories, shared modules)
-docs/                     # documentation (architecture, setup, operations)
-
-```
 
 
 [Node.js]: https://img.shields.io/badge/Node.js-000000?style=for-the-badge&logo=node.js&logoColor=white
