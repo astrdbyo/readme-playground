@@ -54,9 +54,7 @@ Simply **clone → init → start building**.
   - Fast onboarding
   - Long-term maintainability
 
----
-
-## 📚 Table of Contents
+### 📚 Table of Contents
 
 - [Repository Overview](#-repository-overview)
 - [Monorepo Structure](#-monorepo-structure)
@@ -66,9 +64,7 @@ Simply **clone → init → start building**.
 - [Development Rules](#-development-rules)
 - [Contributing](#-contributing)
 
----
-
-## 🧭 Repository Overview
+### 🧭 Repository Overview
 
 This is a monorepo that contains:
 
@@ -83,9 +79,7 @@ This ensures the database access layer is:
 - consistent across the codebase
 - easier to test and maintain independently
 
----
-
-## 🗂 Monorepo Structure
+### 🗂 Monorepo Structure
 
 ```txt
 apps/                     # deployable applications (runtime entry points)
