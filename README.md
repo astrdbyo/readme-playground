@@ -26,7 +26,7 @@ Simply **clone → init → start building**.
 
 ## &nbsp;
 
-## 🧩 Key Features
+### 🧩 Key Features
 
 - **Enterprise-ready monorepo architecture**
   - Clear separation between `apps/` and `packages/`
