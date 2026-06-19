@@ -27,7 +27,7 @@ This service is designed for multiple internal stakeholders:
 Inventory Service is the **single source of truth for asset lifecycle management**. Company structure, user identity, workspace permissions, and branch master data are managed by other services.
 The service is built to support future business growth while maintaining strong data control and a simple user experience with minimal learning curve.
 
-## Relationship With Access Service
+### Relationship With Access Service
 
 Access Service owns platform identity, company structure, workspace access, and execution context.
 
@@ -136,8 +136,6 @@ Multiple workspaces can use the same module.
 
 Each workspace still has isolated downstream data through `workspaceId`.
 
----
-
 ### Branch Strategy
 
 Branch is owned by Access Service as `CompanyBranch`.
@@ -179,7 +177,7 @@ role resolution
 
 Workspace remains the access and data visibility boundary.
 
-### Multi-Stakeholder Design
+### Polymorhpic System Design
 
 Inventory Service supports one shared asset lifecycle with multiple stakeholder views.
 
@@ -373,7 +371,7 @@ Remarks should help distinguish results:
 Company / Workspace / Branch
 ```
 
-### Location Model
+**Location Model**
 
 Inventory Service owns asset operational location detail.
 
@@ -387,94 +385,12 @@ Access CompanyBranch
             └── Inventory AssetPlacement
 ```
 
-### CompanyBranch
 
-Owned by Access Service.
-
-Used by Inventory as:
-
-```txt
-branchId
-branchLabel
-```
-
-### Floor
-
-Owned by Inventory Service.
-
-Floor belongs to:
-
-```txt
-companyId
-workspaceId
-branchId
-```
-
-Floor represents operational floor data inside a branch.
-
-### Zone
-
-Owned by Inventory Service.
-
-Zone belongs to Floor.
-
-Zone can represent:
-
-```txt
-room
-area
-rack
-pantry
-meeting room
-server room
-storage
-```
-
-### FloorPlan
-
-Owned by Inventory Service.
-
-FloorPlan stores uploaded visual layout files for distribution map.
-
-It supports future features such as:
-
-```txt
-office layout
-asset pinning
-visual placement
-drag and drop position
-distribution monitoring
-```
-
-### AssetPlacement
-
-Owned by Inventory Service.
-
-AssetPlacement stores current physical location snapshot.
-
-It can store:
-
-```txt
-branchId
-branchLabel
-floorId
-floorPlanId
-zoneId
-mapX
-mapY
-rotation
-displayLabel
-note
-```
-
-Historical movement is stored separately in `AssetMovement`.
-
-
-### Service Layer Location Rules
+### Service Layer Development Rules
 
 Because Branch is owned by Access Service, Inventory Service must validate branch references at service layer.
 
-### FloorService must validate
+- FloorService must validate
 
 ```txt
 branchId exists in Access Service
@@ -482,7 +398,7 @@ branchId belongs to current company
 branch is active
 ```
 
-### FloorPlanService must validate
+- FloorPlanService must validate
 
 ```txt
 branchId exists in Access Service
@@ -492,7 +408,7 @@ floorId belongs to same branchId
 only one active floor plan per floor is allowed
 ```
 
-### ZoneService must validate
+- ZoneService must validate
 
 ```txt
 floorId belongs to current company
@@ -500,7 +416,7 @@ floorId belongs to current workspace
 branch scope is derived from floor.branchId
 ```
 
-### AssetPlacementService must validate
+- AssetPlacementService must validate
 
 ```txt
 branchId exists in Access Service
@@ -511,7 +427,7 @@ floorPlanId belongs to same floorId when floorPlanId is provided
 zoneId belongs to same floorId when zoneId is provided
 ```
 
-### AssetMovementService must validate
+- AssetMovementService must validate
 
 ```txt
 fromBranchId and toBranchId exist in Access Service when provided
@@ -532,52 +448,6 @@ AssetCategory
     └── AssetVariant
 ```
 
-### AssetCategory
-
-Global baseline category.
-
-Tied to `AssetProfileType`.
-
-Examples:
-
-```txt
-IT Equipment
-Furniture
-Facility Equipment
-Vehicle
-```
-
-### AssetType
-
-Workspace-scoped type.
-
-Examples:
-
-```txt
-Computer
-Chair
-Air Conditioner
-Vehicle
-```
-
-### AssetVariant
-
-Workspace-scoped practical asset variant.
-
-Examples:
-
-```txt
-Laptop
-Desktop PC
-Office Chair
-Split AC
-Car
-```
-
-AssetVariant can define asset code prefix and optional depreciation policy override.
-
----
-
 ## Asset Model Catalog
 
 `AssetModelCatalog` supports cleaner user input and better suggestions.
@@ -596,7 +466,7 @@ It helps reduce repeated manual typing and improves data consistency.
 
 ---
 
-## Capability Profiles
+## Assets Profiles
 
 Asset uses polymorphic profile tables to avoid nullable fields in the main Asset table.
 
@@ -675,7 +545,7 @@ AssetWarranty
 
 Vendor is not assignment.
 
-## Assignment Model
+### Assignment Model
 
 Assignment represents internal responsibility or custody.
 
@@ -723,7 +593,7 @@ assignmentType = other
 assignedToLabel = Security Lobby
 ```
 
-## Movement Model
+### Movement Model
 
 AssetMovement stores historical physical movement.
 
@@ -754,7 +624,7 @@ toLabel
 
 This keeps history readable even if location data changes later.
 
-## Service and Maintenance
+### Service and Maintenance
 
 AssetServiceLog stores service and maintenance history.
 
@@ -780,7 +650,7 @@ note
 
 Service to vendor does not mean assignment changes to vendor.
 
-## Warranty
+### Warranty
 
 AssetWarranty stores warranty information.
 
@@ -923,7 +793,7 @@ repair invoice
 
 Inventory stores only document metadata and Drive references.
 
-## Audit Log
+### Audit Log
 
 Inventory Service has downstream-scoped AuditLog.
 
@@ -937,7 +807,7 @@ Inventory audit stores IDs and labels as snapshots.
 
 ---
 
-## Security Rules
+### Security Rules
 
 Inventory Service should trust only gateway-injected context.
 
@@ -956,11 +826,9 @@ Branch is not a security boundary.
 
 Workspace is the access and data visibility boundary.
 
----
+### Module Map
 
-## Module Map
-
-### Master Data
+**Master Data**
 
 ```txt
 AssetCategory
@@ -972,7 +840,7 @@ Vendor
 DepreciationPolicy
 ```
 
-### Execution Core
+**Execution Core**
 
 ```txt
 Asset
@@ -980,7 +848,7 @@ AssetBatch
 AssetCodeSequence
 ```
 
-### Capability Profiles
+**Capability Profiles**
 
 ```txt
 AssetITProfile
@@ -989,7 +857,7 @@ AssetFacilityProfile
 AssetVehicleProfile
 ```
 
-### Location
+**Location**
 
 ```txt
 Floor
@@ -1002,7 +870,7 @@ Branch is not an Inventory model.
 
 Branch is owned by Access Service as CompanyBranch.
 
-### Lifecycle
+**Lifecycle**
 
 ```txt
 AssetAssignment
@@ -1011,7 +879,7 @@ AssetServiceLog
 AssetStatusHistory
 ```
 
-### Finance / Procurement / Document
+**Finance / Procurement / Document**
 
 ```txt
 AssetFinance
@@ -1022,33 +890,11 @@ AssetDocument
 AssetWarranty
 ```
 
-### Audit
+**System Log**
 
 ```txt
 AuditLog
 ```
-
----
-
-## Migration Notes
-
-Recommended migration order:
-
-```txt
-1. Finalize Access Service CompanyBranch schema.
-2. Run Access prisma validate.
-3. Migrate Access Service.
-4. Remove Branch model from Inventory Service.
-5. Store branchId + branchLabel in Inventory location models.
-6. Run Inventory prisma validate.
-7. Migrate Inventory Service.
-8. Regenerate Prisma clients.
-9. Adjust repositories and services affected by Branch removal.
-10. Add Access branch options endpoint.
-11. Consume branch options in Inventory UI/service flow.
-```
-
----
 
 ## Future Features
 
@@ -1105,7 +951,7 @@ Inventory Service:
 - document reference
 ```
 
-Final rule:
+**Final Statement:**
 
 ```txt
 Access owns company structure and company location master.
