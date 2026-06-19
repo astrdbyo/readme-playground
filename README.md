@@ -11,16 +11,12 @@ Structured for clarity, maintainability, and fast onboarding.  -->
 
 [← Back to Main README](../README.md)
 
-## Development Rules
-
-
-
 
 ## Inventory Service
 
 ### Overview
 
-Inventory Service is a downstream business service in Intcrews Hub for managing company asset lifecycle.
+Inventory Service is a **downstream business service** in Intcrews Hub for managing company asset lifecycle. It consumes trusted execution context from API Gateway and Access Service.
 
 This service is designed for multiple internal stakeholders:
 
@@ -28,34 +24,8 @@ This service is designed for multiple internal stakeholders:
 * General Affairs / GA
 * Finance / Accounting
 
-Inventory Service acts as the **single source of truth for asset lifecycle management**, not for company structure, identity, workspace permission, or company branch master data.
-
-Philosophy:
-
-```txt
-simple for user
-strict for system
-future-proof for business
-```
-
-### System Position
-
-Inventory Service is part of the Intcrews Hub service architecture.
-
-```txt
-Frontend
-→ API Gateway
-→ Access Service
-→ Downstream Services
-```
-
-Inventory Service is a downstream service.
-
-It consumes trusted execution context from API Gateway and Access Service.
-
-Inventory Service does not resolve authentication, workspace access, company membership, or user identity directly.
-
----
+Inventory Service is the **single source of truth for asset lifecycle management**. Company structure, user identity, workspace permissions, and branch master data are managed by other services.
+The service is built to support future business growth while maintaining strong data control and a simple user experience with minimal learning curve.
 
 ## Relationship With Access Service
 
@@ -78,7 +48,6 @@ Workspace ownership profiles
 ```
 
 Inventory Service references Access-owned entities using UUID snapshots only.
-
 There is no cross-service relational dependency and no cross-database foreign key.
 
 Common Access references used by Inventory:
