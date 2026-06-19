@@ -788,13 +788,9 @@ Inventory stores only document metadata and Drive references.
 ### Audit Log
 
 Inventory Service has downstream-scoped AuditLog.
-
 It stores immutable event snapshots for traceability.
-
 Downstream AuditLog should not contain Access Service relations.
-
 Access Service owns canonical user and company relations.
-
 Inventory audit stores IDs and labels as snapshots.
 
 ### Security Rules
