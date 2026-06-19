@@ -293,7 +293,7 @@ Components:
 
 ```txt
 IT     = owner department
-01     = company code
+01     = company sequence code
 2024   = acquisition year
 NTB    = asset code prefix / category-like prefix
 000123 = running sequence
@@ -390,7 +390,7 @@ Access CompanyBranch
 
 Because Branch is owned by Access Service, Inventory Service must validate branch references at service layer.
 
-- FloorService must validate
+- Floor Service must validate
 
 ```txt
 branchId exists in Access Service
@@ -398,7 +398,7 @@ branchId belongs to current company
 branch is active
 ```
 
-- FloorPlanService must validate
+- FloorPlan Service must validate
 
 ```txt
 branchId exists in Access Service
@@ -408,7 +408,7 @@ floorId belongs to same branchId
 only one active floor plan per floor is allowed
 ```
 
-- ZoneService must validate
+- Zone Service must validate
 
 ```txt
 floorId belongs to current company
@@ -416,7 +416,7 @@ floorId belongs to current workspace
 branch scope is derived from floor.branchId
 ```
 
-- AssetPlacementService must validate
+- Asset Placement Service must validate
 
 ```txt
 branchId exists in Access Service
@@ -427,7 +427,7 @@ floorPlanId belongs to same floorId when floorPlanId is provided
 zoneId belongs to same floorId when zoneId is provided
 ```
 
-- AssetMovementService must validate
+- Asset Movement Service must validate
 
 ```txt
 fromBranchId and toBranchId exist in Access Service when provided
@@ -435,8 +435,6 @@ fromFloorId and toFloorId match their branch references when provided
 fromZoneId and toZoneId match their floor references when provided
 labels are stored as immutable historical snapshots
 ```
-
----
 
 ## Asset Classification
 
@@ -463,8 +461,6 @@ Daikin FTKC25
 ```
 
 It helps reduce repeated manual typing and improves data consistency.
-
----
 
 ## Assets Profiles
 
@@ -734,8 +730,6 @@ AssetDepreciation stores monthly depreciation results.
 
 It is generated from finance calculation logic.
 
----
-
 ### Historical Tracking
 
 Current state is stored directly on Asset for fast query.
@@ -765,8 +759,6 @@ AuditLog
 History must not be overwritten.
 
 New lifecycle events should create new records or update lifecycle-specific records intentionally.
-
----
 
 ### Document Strategy
 
@@ -804,8 +796,6 @@ Downstream AuditLog should not contain Access Service relations.
 Access Service owns canonical user and company relations.
 
 Inventory audit stores IDs and labels as snapshots.
-
----
 
 ### Security Rules
 
@@ -916,8 +906,6 @@ procurement traceability
 ```
 
 without requiring major schema rewrite.
-
----
 
 ## Conclusion
 
