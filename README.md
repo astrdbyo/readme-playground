@@ -63,11 +63,9 @@ employeeId
 
 These values are resolved from trusted execution context or fetched from Access Service options.
 
----
+### Data Ownership Boundary
 
-## Data Ownership Boundary
-
-### Access Service owns
+**Access Service owns**
 
 ```txt
 company master
@@ -80,7 +78,7 @@ user identity
 role context
 ```
 
-### Inventory Service owns
+**Inventory Service owns**
 
 ```txt
 asset master data
@@ -102,9 +100,7 @@ floor plan
 asset placement
 ```
 
----
-
-## Workspace Execution Context
+### Workspace Execution Context
 
 Inventory Service is workspace-centric.
 
@@ -142,7 +138,7 @@ Each workspace still has isolated downstream data through `workspaceId`.
 
 ---
 
-## Branch Strategy
+### Branch Strategy
 
 Branch is owned by Access Service as `CompanyBranch`.
 
@@ -183,9 +179,7 @@ role resolution
 
 Workspace remains the access and data visibility boundary.
 
----
-
-## Multi-Stakeholder Design
+### Multi-Stakeholder Design
 
 Inventory Service supports one shared asset lifecycle with multiple stakeholder views.
 
@@ -238,9 +232,7 @@ one asset lifecycle
 multiple stakeholder views
 ```
 
----
-
-## Asset Modeling Principle
+### Asset Modeling Principle
 
 Physical assets are tracked per item.
 
@@ -283,9 +275,7 @@ finance valuation
 
 while keeping onboarding simple.
 
----
-
-## Asset Identification
+### Asset Identification
 
 Asset code is system generated.
 
@@ -313,9 +303,7 @@ NTB    = asset code prefix / category-like prefix
 
 Asset code is used as the primary operational identity shown to users.
 
----
-
-## QR Code and Asset Scanner
+### QR Code and Asset Scanner
 
 QR Code image does not need to be stored in the database.
 
@@ -385,9 +373,7 @@ Remarks should help distinguish results:
 Company / Workspace / Branch
 ```
 
----
-
-## Location Model
+### Location Model
 
 Inventory Service owns asset operational location detail.
 
@@ -483,9 +469,8 @@ note
 
 Historical movement is stored separately in `AssetMovement`.
 
----
 
-## Service Layer Location Rules
+### Service Layer Location Rules
 
 Because Branch is owned by Access Service, Inventory Service must validate branch references at service layer.
 
@@ -645,13 +630,11 @@ engine number
 fuel type
 ```
 
----
-
-## Brand vs Vendor
+### Brand vs Vendor
 
 Brand and Vendor are different concepts.
 
-### Brand
+**Brand**
 
 Brand is the product manufacturer or principal.
 
@@ -668,7 +651,7 @@ Daikin
 
 Brand is used in asset profiles and model catalog suggestions.
 
-### Vendor
+**Vendor**
 
 Vendor is the seller, distributor, service provider, or warranty provider.
 
@@ -691,8 +674,6 @@ AssetWarranty
 ```
 
 Vendor is not assignment.
-
----
 
 ## Assignment Model
 
@@ -742,8 +723,6 @@ assignmentType = other
 assignedToLabel = Security Lobby
 ```
 
----
-
 ## Movement Model
 
 AssetMovement stores historical physical movement.
@@ -775,8 +754,6 @@ toLabel
 
 This keeps history readable even if location data changes later.
 
----
-
 ## Service and Maintenance
 
 AssetServiceLog stores service and maintenance history.
@@ -803,8 +780,6 @@ note
 
 Service to vendor does not mean assignment changes to vendor.
 
----
-
 ## Warranty
 
 AssetWarranty stores warranty information.
@@ -822,9 +797,7 @@ endDate
 note
 ```
 
----
-
-## Procurement
+### Procurement
 
 AssetProcurement stores purchase traceability.
 
@@ -846,9 +819,7 @@ note
 
 One procurement record can contain many asset items through `AssetProcurementItem`.
 
----
-
-## Finance and Depreciation
+### Finance and Depreciation
 
 Finance remains the owner of accounting truth.
 
@@ -895,7 +866,7 @@ It is generated from finance calculation logic.
 
 ---
 
-## Historical Tracking
+### Historical Tracking
 
 Current state is stored directly on Asset for fast query.
 
@@ -927,7 +898,7 @@ New lifecycle events should create new records or update lifecycle-specific reco
 
 ---
 
-## Document Strategy
+### Document Strategy
 
 Inventory Service does not own file storage.
 
@@ -951,33 +922,6 @@ repair invoice
 ```
 
 Inventory stores only document metadata and Drive references.
-
----
-
-## Mandatory Field Principle
-
-Only truly essential fields are mandatory.
-
-Example:
-
-```txt
-Furniture:
-serial number = optional
-warranty = optional
-
-Laptop:
-serial number = recommended
-```
-
-Goal:
-
-```txt
-reduce operational pain
-preserve data quality
-support historical migration
-```
-
----
 
 ## Audit Log
 
@@ -1129,7 +1073,7 @@ without requiring major schema rewrite.
 
 ---
 
-## Final Boundary Summary
+## Conclusion
 
 ```txt
 Access Service:
