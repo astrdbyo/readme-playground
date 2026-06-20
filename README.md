@@ -93,9 +93,9 @@ systemRoles + companyRoles + workspaceRoles = layered checks
 
 They are not random OR rules.
 
----
+## &nbsp;
 
-## 3. System role
+**3. System role**
 
 `systemRoles` controls access at platform level.
 
