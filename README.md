@@ -311,9 +311,9 @@ Use this for company-scoped routes.
 
 ## &nbsp;
 
-## 9. Route types and examples
+**9. Route types and examples**
 
-### 9.1 Global list route
+**9.1 Global list route**
 
 Used by admin page and user selector page.
 
@@ -335,7 +335,7 @@ Normal users must not see all companies by accident.
 
 ## &nbsp;
 
-### 9.2 Company detail route
+**9.2 Company detail route**
 
 Used to show company detail page.
 
@@ -367,7 +367,7 @@ Read response can be combined for page needs.
 
 ## &nbsp;
 
-### 9.3 Workspace runtime options route
+**9.3 Workspace runtime options route**
 
 Used by downstream services or workspace apps.
 
@@ -394,9 +394,9 @@ Do not use `allowWithoutExecution`.
 
 This prevents random company-level access outside workspace runtime.
 
-## &nbsp;
 
-### 9.4 Company owner update route
+
+**9.4 Company owner update route**
 
 Used by admin/superuser or company owner.
 
@@ -431,9 +431,9 @@ Company owner can update company profile.
 Only admin/superuser can update company status.
 ```
 
-## &nbsp;
 
-### 9.5 Hard delete route
+
+**9.5 Hard delete route**
 
 Used only by superuser.
 
@@ -452,7 +452,7 @@ Use `superuserOnly` for irreversible actions.
 
 ## &nbsp;
 
-## 10. Read model and write model can be different
+**10. Read model and write model can be different**
 
 A detail endpoint may return combined data.
 
@@ -493,7 +493,7 @@ Write route is for clear data ownership.
 
 ## &nbsp;
 
-## 11. Options endpoint
+**11. Options endpoint**
 
 Options endpoints are for select/dropdown/reference usage.
 
@@ -542,7 +542,7 @@ const badge = option.isHeadOffice ? 'HQ' : 'Branch'
 
 ## &nbsp;
 
-## 12. Controller responsibility
+**12. Controller responsibility**
 
 Controller is only an HTTP adapter.
 
@@ -576,7 +576,7 @@ async branchOptions(req: Request, res: Response) {
 
 ## &nbsp;
 
-## 13. Service responsibility
+**13. Service responsibility**
 
 Service owns business rules.
 
@@ -605,7 +605,7 @@ This prevents mistakes when a route changes later.
 
 ## &nbsp;
 
-## 14. Repository responsibility
+**14. Repository responsibility**
 
 Repository owns database access only.
 
@@ -627,7 +627,7 @@ Business validation belongs in service.
 
 ## &nbsp;
 
-## 15. Frontend consumption rule
+**15. Frontend consumption rule**
 
 Frontend may send selected context to Gateway:
 
@@ -654,7 +654,7 @@ Downstream services consume trusted headers from Gateway.
 
 ## &nbsp;
 
-## 16. Route design checklist
+**16. Route design checklist**
 
 Before adding a route, answer these questions:
 
@@ -675,7 +675,7 @@ If the route is hard to explain, the route is probably too vague.
 
 ## &nbsp;
 
-## 17. Naming guideline
+**17. Naming guideline**
 
 Use clear route names.
 
@@ -703,9 +703,9 @@ Route name should show intent.
 
 ## &nbsp;
 
-## 18. Common mistakes
+**18. Common mistakes**
 
-### Mistake 1: Using `allowWithoutExecution` everywhere
+**Mistake 1: Using `allowWithoutExecution` everywhere**
 
 Do not do this.
 
@@ -713,9 +713,9 @@ Use it only when a route really can run without selected company/workspace.
 
 Workspace runtime routes should usually not use it.
 
-## &nbsp;
 
-### Mistake 2: Missing `enforceCompanyScope`
+
+**Mistake 2: Missing `enforceCompanyScope`**
 
 If route has `:companyId`, consider using:
 
@@ -725,25 +725,25 @@ enforceCompanyScope: true
 
 Especially for update/delete/detail routes.
 
-## &nbsp;
 
-### Mistake 3: Returning too much data from options endpoint
+
+**Mistake 3: Returning too much data from options endpoint**
 
 Options endpoint should be small.
 
 Use detail endpoint for full data.
 
-## &nbsp;
 
-### Mistake 4: Mixing unrelated write behavior
+
+**Mistake 4: Mixing unrelated write behavior**
 
 Do not update company profile, logo, branch, and status in one endpoint.
 
 Separate by action and data ownership.
 
-## &nbsp;
 
-### Mistake 5: Assuming frontend is trusted
+
+**Mistake 5: Assuming frontend is trusted**
 
 Frontend is not trusted for authorization.
 
@@ -753,7 +753,7 @@ Gateway and Access Service resolve trusted context.
 
 ## &nbsp;
 
-## 19. Simple rule summary
+**19. Simple rule summary**
 
 ```txt
 Platform route
