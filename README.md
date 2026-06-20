@@ -123,9 +123,9 @@ Only admin and superuser can access.
 No selected company/workspace is required.
 ```
 
----
+## &nbsp;
 
-## 4. Company role
+**4. Company role**
 
 `companyRoles` controls access inside selected company context.
 
@@ -152,9 +152,9 @@ params.companyId must match selected companyId.
 Admin/superuser may access from admin mode without selected company.
 ```
 
----
+## &nbsp;
 
-## 5. Workspace role
+**5. Workspace role**
 
 `workspaceRoles` controls access inside selected workspace context.
 
@@ -184,9 +184,9 @@ Do not use `allowWithoutExecution` for workspace runtime routes unless there is 
 
 Workspace runtime routes should require workspace context.
 
----
+## &nbsp;
 
-## 6. Admin and superuser override
+**6. Admin and superuser override**
 
 Admin and superuser have special behavior.
 
@@ -224,9 +224,9 @@ Use this for:
 * irreversible system action
 * dangerous maintenance action
 
----
+## &nbsp;
 
-## 7. `allowWithoutExecution`
+**7. `allowWithoutExecution`**
 
 `allowWithoutExecution` means:
 
@@ -272,9 +272,9 @@ Admin/superuser can access without selected company.
 Normal user must have selected company.
 ```
 
----
+## &nbsp;
 
-## 8. `enforceCompanyScope`
+**8. `enforceCompanyScope`**
 
 Use `enforceCompanyScope` when the route has `:companyId` param.
 
@@ -309,7 +309,7 @@ params.companyId must match execution.companyId
 
 Use this for company-scoped routes.
 
----
+## &nbsp;
 
 ## 9. Route types and examples
 
@@ -333,7 +333,7 @@ Service must still filter data for normal users.
 
 Normal users must not see all companies by accident.
 
----
+## &nbsp;
 
 ### 9.2 Company detail route
 
@@ -365,7 +365,7 @@ branches
 
 Read response can be combined for page needs.
 
----
+## &nbsp;
 
 ### 9.3 Workspace runtime options route
 
@@ -394,7 +394,7 @@ Do not use `allowWithoutExecution`.
 
 This prevents random company-level access outside workspace runtime.
 
----
+## &nbsp;
 
 ### 9.4 Company owner update route
 
@@ -431,7 +431,7 @@ Company owner can update company profile.
 Only admin/superuser can update company status.
 ```
 
----
+## &nbsp;
 
 ### 9.5 Hard delete route
 
@@ -450,7 +450,7 @@ router.delete(
 
 Use `superuserOnly` for irreversible actions.
 
----
+## &nbsp;
 
 ## 10. Read model and write model can be different
 
@@ -491,7 +491,7 @@ Read response is for UI convenience.
 
 Write route is for clear data ownership.
 
----
+## &nbsp;
 
 ## 11. Options endpoint
 
@@ -540,7 +540,7 @@ Frontend can render:
 const badge = option.isHeadOffice ? 'HQ' : 'Branch'
 ```
 
----
+## &nbsp;
 
 ## 12. Controller responsibility
 
@@ -574,7 +574,7 @@ async branchOptions(req: Request, res: Response) {
 }
 ```
 
----
+## &nbsp;
 
 ## 13. Service responsibility
 
@@ -603,7 +603,7 @@ Even if middleware already checks access, service may still protect scoped data.
 
 This prevents mistakes when a route changes later.
 
----
+## &nbsp;
 
 ## 14. Repository responsibility
 
@@ -625,7 +625,7 @@ Repository should not:
 
 Business validation belongs in service.
 
----
+## &nbsp;
 
 ## 15. Frontend consumption rule
 
@@ -652,7 +652,7 @@ Gateway and Access Service resolve trusted context.
 
 Downstream services consume trusted headers from Gateway.
 
----
+## &nbsp;
 
 ## 16. Route design checklist
 
@@ -673,7 +673,7 @@ Before adding a route, answer these questions:
 
 If the route is hard to explain, the route is probably too vague.
 
----
+## &nbsp;
 
 ## 17. Naming guideline
 
@@ -701,7 +701,7 @@ POST /company/update-detail
 
 Route name should show intent.
 
----
+## &nbsp;
 
 ## 18. Common mistakes
 
@@ -713,7 +713,7 @@ Use it only when a route really can run without selected company/workspace.
 
 Workspace runtime routes should usually not use it.
 
----
+## &nbsp;
 
 ### Mistake 2: Missing `enforceCompanyScope`
 
@@ -725,7 +725,7 @@ enforceCompanyScope: true
 
 Especially for update/delete/detail routes.
 
----
+## &nbsp;
 
 ### Mistake 3: Returning too much data from options endpoint
 
@@ -733,7 +733,7 @@ Options endpoint should be small.
 
 Use detail endpoint for full data.
 
----
+## &nbsp;
 
 ### Mistake 4: Mixing unrelated write behavior
 
@@ -741,7 +741,7 @@ Do not update company profile, logo, branch, and status in one endpoint.
 
 Separate by action and data ownership.
 
----
+## &nbsp;
 
 ### Mistake 5: Assuming frontend is trusted
 
@@ -751,7 +751,7 @@ Frontend only sends selected context.
 
 Gateway and Access Service resolve trusted context.
 
----
+## &nbsp;
 
 ## 19. Simple rule summary
 
