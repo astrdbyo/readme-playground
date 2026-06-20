@@ -333,8 +333,6 @@ Service must still filter data for normal users.
 
 Normal users must not see all companies by accident.
 
-## &nbsp;
-
 **9.2 Company detail route**
 
 Used to show company detail page.
@@ -365,8 +363,6 @@ branches
 
 Read response can be combined for page needs.
 
-## &nbsp;
-
 **9.3 Workspace runtime options route**
 
 Used by downstream services or workspace apps.
@@ -393,8 +389,6 @@ This route requires workspace context.
 Do not use `allowWithoutExecution`.
 
 This prevents random company-level access outside workspace runtime.
-
-
 
 **9.4 Company owner update route**
 
@@ -430,8 +424,6 @@ Example:
 Company owner can update company profile.
 Only admin/superuser can update company status.
 ```
-
-
 
 **9.5 Hard delete route**
 
