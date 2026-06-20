@@ -32,7 +32,7 @@ This guide applies to routes inside backend services such as:
 * Inventory Service
 * future downstream services
 
-##&nbsp;
+## &nbsp;
 
 **1. Route file must be readable**
 
@@ -63,9 +63,9 @@ A developer should be able to understand the access rule by reading the route fi
 
 Do not hide route permission inside service logic unless it is a defensive check.
 
-###&nbsp;
+## &nbsp;
 
-## 2. Authorization has 3 layers
+**2. Authorization has 3 layers**
 
 Authorization uses three layers:
 
