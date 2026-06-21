@@ -1,153 +1,340 @@
 [← Back to Main README](../README.md)
 
-# Docker & Server Operations
+# Monorepo Structure
 
-This document contains common Docker and server operation notes used for deployment and maintenance.
+This document explains the high-level structure of the Intcrews Hub monorepo.
 
-It covers:
+The goal is to make the repository easy to understand, easy to typecheck, and safe to deploy across development, staging, and production environments.
+
+## 1. High-Level Architecture
 
 ```txt
-Postgres Docker Compose sample
-Server folder structure
-Container recreation without rebuild
-Nginx validation and reload
-Nginx basic-auth password update
+CLIENT
+  │
+  ▼
+NGINX
+  │
+  ▼
+API GATEWAY
+  │
+  ├── resolve auth/context through Access Service
+  ├── inject trusted internal headers
+  └── route request to target service
+          │
+          ├── Access Service
+          ├── Inventory Service
+          ├── Seafarer Service
+          └── Future Services
 ```
 
-## 🐳 Postgres Docker Compose Sample
+The API Gateway is the public entry point for backend traffic.
 
-```yml
-# infrastructure data layer; postgres server for production environment
-# naming format: <org>-<layer>-<domain>-<service>-<env?>-<variant?>
-# use the format to prevent orphan containers; deterministic stack identity
-# purpose: production database server; private on app-network only
+Access Service is the source of truth for identity, company access, workspace access, and execution context.
 
-name: ics-infra-data-postgres-production
+Downstream services consume trusted context from the Gateway and should not resolve user authorization directly from the frontend.
 
-services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: ics-infra-data-postgres-production
-    restart: unless-stopped
+## 2. Current Monorepo Skeleton
 
-    # load production credentials; keep secrets out of compose file
-    env_file:
-      - .env.production
+```txt
+apps/
+  api-gateway/
+  access-service/
+  inventory-service/
+  seafarer-service/
+  crew-operations-api/     # legacy reference app
+  web/
 
-    # persistent data volume; do not delete
-    volumes:
-      - ./data:/var/lib/postgresql/data
-      - ./backup:/backup
+packages/
+  shared/
+  config/
+  redis/
+  kafka/
+  swagger/
+  vitest/
+  eslint/
+  typescript/
+  database/
+    access/
+    inventory/
+    seafarer/
+  crew-operations-db/      # legacy database package
 
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    external: true
+docs/
+  01-quick-start.md
+  02-monorepo.md
+  03-rules.md
+  04-docker.md
+  05-workflows.md
+  06-route.md
 ```
 
-Run the stack:
+## 3. Apps vs Packages
+
+Use this simple rule:
+
+```txt
+apps/     -> deployable applications
+packages/ -> reusable internal packages
+```
+
+Examples of deployable applications:
+
+```txt
+api-gateway
+access-service
+inventory-service
+web
+```
+
+Examples of reusable packages:
+
+```txt
+@repo/shared
+@repo/config
+@repo/redis
+@repo/database-access
+@repo/database-inventory
+```
+
+Apps may depend on packages.
+
+Packages should not depend on apps.
+
+## 4. Shared Package as Internal SDK
+
+`packages/shared` is the internal SDK of the platform.
+
+It should contain reusable contracts and utilities such as:
+
+```txt
+types
+constants
+validation schemas
+error helpers
+response helpers
+normalization utilities
+request context contracts
+role mapping helpers
+webhook utilities
+```
+
+Design rule:
+
+```txt
+shared must be framework-agnostic
+shared must not understand app architecture
+shared must not depend on Express, Next.js, Prisma, or service-specific logic
+```
+
+Good shared content:
+
+```txt
+Role constants
+RequestContext type
+Http response helper
+Zod primitive schemas
+ErrorResponse helper
+Normalization utility
+```
+
+Avoid putting this into shared:
+
+```txt
+Access Service business rules
+Inventory Service business rules
+Express route handlers
+Prisma repository logic
+Frontend component logic
+```
+
+If a utility only makes sense for one service, keep it inside that service.
+
+If it is reusable across multiple apps/packages, move it into shared.
+
+## 5. Database Packages
+
+Database access is separated by domain.
+
+```txt
+packages/database/access
+packages/database/inventory
+packages/database/seafarer
+```
+
+Each database package owns:
+
+```txt
+Prisma schema
+migrations
+seeders
+Prisma client
+repositories
+database-specific access logic
+```
+
+Services should call repositories from the correct database package.
+
+Example:
+
+```txt
+Access Service
+-> uses packages/database/access
+
+Inventory Service
+-> uses packages/database/inventory
+```
+
+Avoid cross-database foreign keys between service databases.
+
+Use IDs and trusted context snapshots when a downstream service needs references from Access Service.
+
+## 6. Typecheck Rule
+
+We use Turbo-orchestrated typecheck.
+
+Every workspace that contains TypeScript runtime code must have a `typecheck` script.
+
+Add `typecheck` when the package has:
+
+```txt
+tsconfig.json
+src/
+.ts or .tsx files
+runtime code
+code consumed by another app/package
+```
+
+Example package script:
+
+```json
+{
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}
+```
+
+For buildable packages, use the package’s own TypeScript config if needed:
+
+```json
+{
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}
+```
+
+Root typecheck should be orchestrated by Turbo:
 
 ```sh
-docker compose --env-file .env.production up -d
+pnpm turbo typecheck
 ```
 
-## 📁 Server Folder Structure for Applications
+This keeps type safety consistent across apps and packages.
 
-```sh
+## 7. Environment Rules
+
+The project uses environment-specific `.env` files.
+
+```txt
+.env.development
+.env.staging
+.env.production
+.env.test
+```
+
+Developers should not use production to test changes.
+
+Use staging for real integration testing.
+
+```txt
+development -> local development
+staging     -> real integration testing
+production  -> real users and real data
+test        -> automated tests
+```
+
+Production credentials, production database, and production services should not be used for experiments.
+
+## 8. Auth Mode
+
+Backend services may use `AUTH_MODE` to control authentication behavior per environment.
+
+```ts
+AUTH_MODE: 'full-bypass' | 'semi-bypass' | 'strict'
+```
+
+Recommended usage:
+
+```txt
+development -> full-bypass
+staging     -> semi-bypass
+production  -> strict
+```
+
+Meaning:
+
+```txt
+full-bypass
+-> local development only
+-> useful when developer needs to work without real auth flow
+
+semi-bypass
+-> staging only
+-> useful for controlled testing while keeping service boundaries closer to real behavior
+
+strict
+-> production
+-> real authentication and authorization flow
+```
+
+Production must use strict authentication.
+
+Do not use bypass mode in production.
+
+## 9. Server Deployment Layout
+
+Server deployment folders are separated by layer.
+
+```txt
 /opt/docker
-├── applications-layer
-│   ├── intcrews-cdn
-│   └── intcrews-hub
-│       ├── api
-│       │   ├── prod
-│       │   └── staging
-│       └── web
-│           ├── prod
-│           └── staging
+├── infrastructures-layer
+│   └── edge
+│       └── reverse-proxy
+│
+└── applications-layer
+    ├── intcrews-hub
+    │   ├── api
+    │   │   ├── prod
+    │   │   └── staging
+    │   └── web
+    │       ├── prod
+    │       └── staging
+    └── intcrews-cdn
 ```
 
-## 🔁 Recreate Container With Existing Image
-
-Use this when you want to recreate a container using an existing image without rebuilding.
-
-List available images:
-
-```sh
-docker images | grep ops-automation
-```
-
-Choose the image tag you want to use:
-
-```sh
-export IMAGE_TAG=sha-3dfd762
-```
-
-Recreate the API container:
-
-```sh
-docker compose up -d --no-deps --force-recreate api
-```
-
-For staging environment:
-
-```sh
-docker compose --env-file .env.staging up -d --no-deps --force-recreate api
-```
-
-## 🌐 Nginx Validation and Reload
-
-Validate Nginx configuration:
-
-```sh
-docker exec -it ics-infra-edge-nginx nginx -t
-```
-
-Reload Nginx:
-
-```sh
-docker exec -it ics-infra-edge-nginx nginx -s reload
-```
-## 🔐 Update Nginx Basic Auth Password
-
-Go to the reverse proxy folder:
-
-```sh
-cd /opt/docker/infrastructures-layer/edge/reverse-proxy
-```
-
-Check available auth files:
-
-```sh
-ls nginx/nginx-auth
-```
-
-Update or revoke Nginx basic-auth password:
-
-```sh
-docker run --rm \
-  -v $(pwd)/nginx/nginx-auth:/output \
-  httpd:2.4-alpine \
-  sh -c "htpasswd -bB /output/staging-aii-hub-api.htpasswd qauser NewPassword123"
-```
-
-## ✅ Quick Checklist
-
-Before running Docker or Nginx operations, verify:
+Simple rule:
 
 ```txt
-1. You are in the correct server folder.
-2. You are using the correct environment file.
-3. You are targeting the correct service name.
-4. You already checked the current running containers.
-5. You already validated Nginx config before reload.
+infrastructures-layer -> shared infrastructure
+applications-layer    -> deployable apps
 ```
 
-Useful commands:
+Keep staging and production separated.
 
-```sh
-docker ps
-docker compose ps
-docker images
+Do not reuse production folders for staging tests.
+
+## 10. Quick Rules
+
+```txt
+apps are deployable
+packages are reusable
+shared is internal SDK
+shared must stay framework-agnostic
+database packages own Prisma and repositories
+each TypeScript workspace needs typecheck
+development uses full-bypass
+staging uses semi-bypass
+production uses strict auth
+never test using production data or production credentials
 ```
