@@ -2,12 +2,12 @@
 
 # Development Rules
 
-This document defines the daily engineering rules used in this repository.
+This document defines the daily engineering agreement used in this repository.
 
-Some rules may feel a little strict or slower at first. That is normal. The goal is not to make development harder, but to make the codebase easier to read, easier to continue, and easier to maintain after weeks or months without touching it.
+These rules are not here to make development feel harder. Some of them may feel strict at first, but the goal is simple: make the codebase easier to read, easier to continue, and easier to maintain after weeks or months without touching it.
 
 > [!TIP]
-> A good system is a system with certainty
+> A good system gives people certainty.
 
 When naming, structure, comments, commits, and patterns are predictable, developers spend less energy remembering old context and more energy solving the actual problem.
 
@@ -22,7 +22,26 @@ Avoid Repeated Decision-Making
 Make Onboarding Easier
 ```
 
-## 1. Commit Message Rules
+Use this document as a shared team agreement.
+
+Some rules are mandatory. Some are recommended. Some are things we should avoid. The purpose is not to blame people for small mistakes, but to keep the project comfortable for everyone who has to work with it later.
+
+## 1. Rule Levels
+
+| Level       | Meaning                                                                     |
+| ----------- | --------------------------------------------------------------------------- |
+| Mandatory   | Must be followed because it affects consistency, safety, or maintainability |
+| Recommended | Strongly preferred, but can be adjusted when there is a clear reason        |
+| Avoid       | Not always forbidden, but should not become the default pattern             |
+
+Simple rule:
+
+```txt
+if a pattern makes the code easier to read later, follow it
+if a pattern creates confusion later, avoid it
+```
+
+## 2. Commit Message Rules
 
 Commit messages must use this format:
 
@@ -41,13 +60,12 @@ docs
 test
 ```
 
-Rules:
-
-```txt
-scope is not allowed
-subject is required
-subject should be short and clear
-```
+| Rule                         | Level       |
+| ---------------------------- | ----------- |
+| Use allowed commit type      | Mandatory   |
+| Include subject              | Mandatory   |
+| Do not use scope             | Mandatory   |
+| Keep subject short and clear | Recommended |
 
 Valid examples:
 
@@ -68,53 +86,53 @@ fix
 docs:
 ```
 
-## 2. Naming Conventions
+## 3. Naming Conventions
 
 Naming should make the project easy to scan.
 
-Use predictable names so developers can understand the responsibility of a file without opening it first.
+A developer should be able to understand the responsibility of a folder, file, class, or function without opening too many files.
 
-| Category       | Rule                                                | Example / Notes                                                                                  |
-| -------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Folder Naming  | Use plural names for grouped responsibility folders | `controllers/`, `services/`, `repositories/`, `schemas/`, `middlewares/`                         |
-| Folder Naming  | Use lowercase                                       | `middleware/`, `database/`, `shared/`                                                            |
-| Folder Naming  | Use hyphen for multi-word folders                   | `access-service/`, `inventory-service/`                                                          |
-| Folder Naming  | Use `lib/` for local shared modules inside one app  | `lib/dto/`, `lib/helper/`, `lib/utils/`                                                          |
-| App Naming     | Use domain or deployable service name               | `api-gateway`, `access-service`, `inventory-service`                                             |
-| Package Naming | Use clear internal package names                    | `@repo/shared`, `@repo/config`, `@repo/database-access`                                          |
-| File Naming    | Use lowercase                                       | `user.controller.ts`, `company.schema.ts`                                                        |
-| File Naming    | Use suffix based on responsibility                  | `.controller.ts`, `.svc.ts`, `.repository.ts`, `.schema.ts`, `.dto.ts`, `.helper.ts`, `.util.ts` |
-| File Naming    | Use `svc` for service files                         | `user.svc.ts`, `company.svc.ts`                                                                  |
-| File Naming    | Use hyphen when file names become long              | `company-member.dto.ts`, `workspace-member.repository.ts`                                        |
-| File Naming    | Avoid excessive generic `index.ts` usage            | Prefer `index.shared.ts`, `index.database.access.ts` when clarity helps                          |
-| Variables      | Use explicit names                                  | `userAccountId`, `companyId`, `isActive`, `accessToken`                                          |
-| Variables      | Avoid unclear single-letter names in business logic | Avoid `x`, `e`, `r`                                                                              |
-| Variables      | Short names are allowed in small local scope        | `i` in loops, `tx` in transactions, `item` in callbacks                                          |
-| Functions      | Use camelCase                                       | `createUser()`, `getCompanyDetail()`                                                             |
-| Functions      | Use verbs for actions                               | `validatePayload()`, `resolveExecution()`, `mapToResponse()`                                     |
-| Classes        | Use PascalCase                                      | `UserController`, `CompanyService`, `UserRepository`                                             |
-| Classes        | One class should represent one responsibility       | Avoid generic names like `Manager` or `Handler` without context                                  |
-| Types          | Use PascalCase                                      | `CreateUserDTO`, `CompanyMemberPayload`                                                          |
-| Types          | Use semantic suffixes                               | `DTO`, `Payload`, `Response`, `Result`, `Context`                                                |
-| Interfaces     | Interface prefix `I` is allowed when useful         | `IUserPublic`, `IUserPrivate`                                                                    |
-| Constants      | Use UPPER_SNAKE_CASE for true constants             | `MAX_RETRY_COUNT`, `DEFAULT_TIMEOUT`                                                             |
-| Constants      | Use named constant objects for domain values        | `SYSTEM_ROLE`, `COMPANY_STATUS`, `WORKSPACE_ROLE`                                                |
-| Unused Params  | Prefix with underscore                              | `_req`, `_res`, `_next`, `_context`                                                              |
+| Category       | Rule                                                | Level       | Example / Notes                                                                                  |
+| -------------- | --------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------ |
+| Folder Naming  | Use plural names for grouped responsibility folders | Recommended | `controllers/`, `services/`, `repositories/`, `schemas/`, `middlewares/`                         |
+| Folder Naming  | Use lowercase                                       | Mandatory   | `middleware/`, `database/`, `shared/`                                                            |
+| Folder Naming  | Use hyphen for multi-word folders                   | Recommended | `access-service/`, `inventory-service/`                                                          |
+| Folder Naming  | Use `lib/` for local shared modules inside one app  | Recommended | `lib/dto/`, `lib/helper/`, `lib/utils/`                                                          |
+| App Naming     | Use domain or deployable service name               | Mandatory   | `api-gateway`, `access-service`, `inventory-service`                                             |
+| Package Naming | Use clear internal package names                    | Mandatory   | `@repo/shared`, `@repo/config`, `@repo/database-access`                                          |
+| File Naming    | Use lowercase                                       | Mandatory   | `user.controller.ts`, `company.schema.ts`                                                        |
+| File Naming    | Use suffix based on responsibility                  | Mandatory   | `.controller.ts`, `.svc.ts`, `.repository.ts`, `.schema.ts`, `.dto.ts`, `.helper.ts`, `.util.ts` |
+| File Naming    | Use `svc` for service files                         | Mandatory   | `user.svc.ts`, `company.svc.ts`                                                                  |
+| File Naming    | Use hyphen when file names become long              | Recommended | `company-member.dto.ts`, `workspace-member.repository.ts`                                        |
+| File Naming    | Avoid excessive generic `index.ts` usage            | Recommended | Prefer `index.shared.ts`, `index.database.access.ts` when clarity helps                          |
+| Variables      | Use explicit names                                  | Mandatory   | `userAccountId`, `companyId`, `isActive`, `accessToken`                                          |
+| Variables      | Avoid unclear single-letter names in business logic | Avoid       | Avoid `x`, `e`, `r`                                                                              |
+| Variables      | Short names are allowed in small local scope        | Recommended | `i` in loops, `tx` in transactions, `item` in callbacks                                          |
+| Functions      | Use camelCase                                       | Mandatory   | `createUser()`, `getCompanyDetail()`                                                             |
+| Functions      | Use verbs for actions                               | Recommended | `validatePayload()`, `resolveExecution()`, `mapToResponse()`                                     |
+| Classes        | Use PascalCase                                      | Mandatory   | `UserController`, `CompanyService`, `UserRepository`                                             |
+| Classes        | One class should represent one responsibility       | Recommended | Avoid generic names like `Manager` or `Handler` without context                                  |
+| Types          | Use PascalCase                                      | Mandatory   | `CreateUserDTO`, `CompanyMemberPayload`                                                          |
+| Types          | Use semantic suffixes                               | Recommended | `DTO`, `Payload`, `Response`, `Result`, `Context`                                                |
+| Interfaces     | Interface prefix `I` is allowed when useful         | Recommended | `IUserPublic`, `IUserPrivate`                                                                    |
+| Constants      | Use UPPER_SNAKE_CASE for true constants             | Mandatory   | `MAX_RETRY_COUNT`, `DEFAULT_TIMEOUT`                                                             |
+| Constants      | Use named constant objects for domain values        | Recommended | `SYSTEM_ROLE`, `COMPANY_STATUS`, `WORKSPACE_ROLE`                                                |
+| Unused Params  | Prefix with underscore                              | Recommended | `_req`, `_res`, `_next`, `_context`                                                              |
 
-## 3. Prisma and Database Naming
+## 4. Prisma and Database Naming
 
-Database naming must stay predictable.
+Database naming must stay predictable because schema changes are expensive and long-lived.
 
-| Category          | Rule                             | Example / Notes                             |
-| ----------------- | -------------------------------- | ------------------------------------------- |
-| Prisma Model      | Use PascalCase and singular name | `UserAccount`, `Company`, `WorkspaceMember` |
-| Prisma Enum       | Use PascalCase for enum name     | `SystemRole`, `UserStatus`, `WorkspaceRole` |
-| Prisma Enum Value | Use lowercase values             | `superuser`, `admin`, `active`, `disabled`  |
-| Database Field    | Use camelCase in Prisma schema   | `companyId`, `createdAt`, `isActive`        |
-| ID Field          | Use explicit domain id           | `userAccountId`, `companyId`, `workspaceId` |
-| Join Table Model  | Use domain membership name       | `CompanyMember`, `WorkspaceMember`          |
-| Repository File   | Match domain model name          | `company-member.repository.ts`              |
-| Seed File         | Use timestamp and domain name    | `20260415T165240.company.seed.ts`           |
+| Category          | Rule                             | Level       | Example / Notes                             |
+| ----------------- | -------------------------------- | ----------- | ------------------------------------------- |
+| Prisma Model      | Use PascalCase and singular name | Mandatory   | `UserAccount`, `Company`, `WorkspaceMember` |
+| Prisma Enum       | Use PascalCase for enum name     | Mandatory   | `SystemRole`, `UserStatus`, `WorkspaceRole` |
+| Prisma Enum Value | Use lowercase values             | Mandatory   | `superuser`, `admin`, `active`, `disabled`  |
+| Database Field    | Use camelCase in Prisma schema   | Mandatory   | `companyId`, `createdAt`, `isActive`        |
+| ID Field          | Use explicit domain id           | Mandatory   | `userAccountId`, `companyId`, `workspaceId` |
+| Join Table Model  | Use domain membership name       | Recommended | `CompanyMember`, `WorkspaceMember`          |
+| Repository File   | Match domain model name          | Recommended | `company-member.repository.ts`              |
+| Seed File         | Use timestamp and domain name    | Recommended | `20260415T165240.company.seed.ts`           |
 
 Good enum example:
 
@@ -143,23 +161,22 @@ database enum values should stay simple, stable, and lowercase
 application constants can map them into readable code
 ```
 
-## 4. Comment Style
+## 5. Comment Style
 
 Comments should help future developers understand intent quickly.
 
 Use English for day-to-day comments.
 
-Keep comments:
-
-```txt
-short
-lowercase
-clear
-inline when possible
-focused on why, not only what
-```
-
-Use `;` to separate related statements in one comment.
+| Rule                                                           | Level       |
+| -------------------------------------------------------------- | ----------- |
+| Keep comments short and clear                                  | Recommended |
+| Use lowercase comments                                         | Recommended |
+| Prefer inline comments when possible                           | Recommended |
+| Explain why, not only what                                     | Recommended |
+| Use `;` to separate related statements in one comment          | Recommended |
+| Do not use emoji or emoticon in code comments                  | Avoid       |
+| Do not write noisy paragraph comments                          | Avoid       |
+| Do not leave unclear comments like `fix later` without context | Avoid       |
 
 Good:
 
@@ -190,29 +207,19 @@ Also avoid:
 // IMPORTANT!!! DO NOT CHANGE THIS 😭🔥
 ```
 
-Rules:
-
-```txt
-no emoji
-no emoticon
-no noisy paragraph comments
-no emotional comments
-no unclear comments like "fix later" without context
-```
-
 Better replacement:
 
 ```ts
 // temporary compatibility layer; remove after inventory service migrates to new context contract
 ```
 
-## 5. Helper Rules
+## 6. Helper Rules
 
 Helpers are allowed, but they must stay clean.
 
 Helpers should reduce service complexity, not hide business flow.
 
-Good use cases:
+Good helper use cases:
 
 ```txt
 mapper
@@ -224,7 +231,7 @@ pure validation
 small business rule extraction
 ```
 
-Forbidden use cases:
+Avoid using helpers for:
 
 ```txt
 repository access
@@ -236,15 +243,6 @@ http request
 side effect
 ```
 
-Good helper comment:
-
-```ts
-// helper exists to reduce service complexity and noise; pure business logic
-// allowed for mapper, transform, payload builder, normalization, merge state, validation
-// forbidden for side effects, repository and orm access, external sdk, transaction
-// avoid coupling helper to repository return types; prefer explicit local types to reduce maintenance cost
-```
-
 Rule of thumb:
 
 ```txt
@@ -253,7 +251,7 @@ if it talks to database, network, filesystem, or external service, it is not a h
 
 Put that logic in service, repository, or utility based on responsibility.
 
-## 6. Controller, Service, Repository Boundary
+## 7. Controller, Service, Repository Boundary
 
 Keep backend layers predictable.
 
@@ -290,7 +288,7 @@ Service may still perform defensive checks even when middleware already validate
 
 This protects the code when routes change later.
 
-## 7. Shared Package Rule
+## 8. Shared Package Rule
 
 `packages/shared` is the internal SDK.
 
@@ -346,7 +344,7 @@ if it only makes sense for one app, keep it inside that app
 if it is reusable across apps/packages, consider shared
 ```
 
-## 8. Typecheck Rule
+## 9. Typecheck Rule
 
 Every workspace that contains TypeScript runtime code must have typecheck.
 
@@ -390,7 +388,7 @@ Do not skip typecheck just because the package is small.
 
 Small packages can still break the monorepo.
 
-## 9. Environment and Safety Rules
+## 10. Environment and Safety Rules
 
 Use the correct environment for the correct purpose.
 
@@ -417,7 +415,7 @@ Production must use strict authentication.
 
 Do not enable bypass mode in production.
 
-## 10. Quick Rules
+## Quick Rules
 
 ```txt
 make route files readable
