@@ -1,115 +1,306 @@
 [← Back to Main README](../README.md)
 
-# Monorepo Structure
+# Development Rules
 
-This document explains the high-level structure of the Intcrews Hub monorepo.
+This document defines the daily engineering rules used in this repository.
 
-The goal is to make the repository easy to understand, easy to typecheck, and safe to deploy across development, staging, and production environments.
+Some rules may feel a little strict or slower at first. That is normal. The goal is not to make development harder, but to make the codebase easier to read, easier to continue, and easier to maintain after weeks or months without touching it.
 
-## 1. High-Level Architecture
+A good system is a system with certainty.
 
-```txt
-CLIENT
-  │
-  ▼
-NGINX
-  │
-  ▼
-API GATEWAY
-  │
-  ├── resolve auth/context through Access Service
-  ├── inject trusted internal headers
-  └── route request to target service
-          │
-          ├── Access Service
-          ├── Inventory Service
-          ├── Seafarer Service
-          └── Future Services
-```
+When naming, structure, comments, commits, and patterns are predictable, developers spend less energy remembering old context and more energy solving the actual problem.
 
-The API Gateway is the public entry point for backend traffic.
-
-Access Service is the source of truth for identity, company access, workspace access, and execution context.
-
-Downstream services consume trusted context from the Gateway and should not resolve user authorization directly from the frontend.
-
-## 2. Current Monorepo Skeleton
+These rules exist to help the team:
 
 ```txt
-apps/
-  api-gateway/
-  access-service/
-  inventory-service/
-  seafarer-service/
-  crew-operations-api/     # legacy reference app
-  web/
-
-packages/
-  shared/
-  config/
-  redis/
-  kafka/
-  swagger/
-  vitest/
-  eslint/
-  typescript/
-  database/
-    access/
-    inventory/
-    seafarer/
-  crew-operations-db/      # legacy database package
-
-docs/
-  01-quick-start.md
-  02-monorepo.md
-  03-rules.md
-  04-docker.md
-  05-workflows.md
-  06-route.md
+read code faster
+remember old code faster
+reduce unclear patterns
+reduce maintenance stress
+avoid repeated decision-making
+make onboarding easier
 ```
 
-## 3. Apps vs Packages
+## 1. Commit Message Rules
 
-Use this simple rule:
+Commit messages must use this format:
+
+```sh
+type: subject
+```
+
+Allowed commit types:
 
 ```txt
-apps/     -> deployable applications
-packages/ -> reusable internal packages
+feat
+fix
+chore
+refactor
+docs
+test
 ```
 
-Examples of deployable applications:
+Rules:
 
 ```txt
-api-gateway
-access-service
-inventory-service
-web
+scope is not allowed
+subject is required
+subject should be short and clear
 ```
 
-Examples of reusable packages:
+Valid examples:
+
+```sh
+feat: add company member endpoint
+fix: prevent workspace member role mismatch
+docs: update route usage guideline
+refactor: simplify user repository scope
+test: add company service unit tests
+chore: update dependencies
+```
+
+Invalid examples:
+
+```sh
+feat(api): add new endpoint
+fix
+docs:
+```
+
+## 2. Naming Conventions
+
+Naming should make the project easy to scan.
+
+Use predictable names so developers can understand the responsibility of a file without opening it first.
+
+| Category       | Rule                                                | Example / Notes                                                                                  |
+| -------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Folder Naming  | Use plural names for grouped responsibility folders | `controllers/`, `services/`, `repositories/`, `schemas/`, `middlewares/`                         |
+| Folder Naming  | Use lowercase                                       | `middleware/`, `database/`, `shared/`                                                            |
+| Folder Naming  | Use hyphen for multi-word folders                   | `access-service/`, `inventory-service/`                                                          |
+| Folder Naming  | Use `lib/` for local shared modules inside one app  | `lib/dto/`, `lib/helper/`, `lib/utils/`                                                          |
+| App Naming     | Use domain or deployable service name               | `api-gateway`, `access-service`, `inventory-service`                                             |
+| Package Naming | Use clear internal package names                    | `@repo/shared`, `@repo/config`, `@repo/database-access`                                          |
+| File Naming    | Use lowercase                                       | `user.controller.ts`, `company.schema.ts`                                                        |
+| File Naming    | Use suffix based on responsibility                  | `.controller.ts`, `.svc.ts`, `.repository.ts`, `.schema.ts`, `.dto.ts`, `.helper.ts`, `.util.ts` |
+| File Naming    | Use `svc` for service files                         | `user.svc.ts`, `company.svc.ts`                                                                  |
+| File Naming    | Use hyphen when file names become long              | `company-member.dto.ts`, `workspace-member.repository.ts`                                        |
+| File Naming    | Avoid excessive generic `index.ts` usage            | Prefer `index.shared.ts`, `index.database.access.ts` when clarity helps                          |
+| Variables      | Use explicit names                                  | `userAccountId`, `companyId`, `isActive`, `accessToken`                                          |
+| Variables      | Avoid unclear single-letter names in business logic | Avoid `x`, `e`, `r`                                                                              |
+| Variables      | Short names are allowed in small local scope        | `i` in loops, `tx` in transactions, `item` in callbacks                                          |
+| Functions      | Use camelCase                                       | `createUser()`, `getCompanyDetail()`                                                             |
+| Functions      | Use verbs for actions                               | `validatePayload()`, `resolveExecution()`, `mapToResponse()`                                     |
+| Classes        | Use PascalCase                                      | `UserController`, `CompanyService`, `UserRepository`                                             |
+| Classes        | One class should represent one responsibility       | Avoid generic names like `Manager` or `Handler` without context                                  |
+| Types          | Use PascalCase                                      | `CreateUserDTO`, `CompanyMemberPayload`                                                          |
+| Types          | Use semantic suffixes                               | `DTO`, `Payload`, `Response`, `Result`, `Context`                                                |
+| Interfaces     | Interface prefix `I` is allowed when useful         | `IUserPublic`, `IUserPrivate`                                                                    |
+| Constants      | Use UPPER_SNAKE_CASE for true constants             | `MAX_RETRY_COUNT`, `DEFAULT_TIMEOUT`                                                             |
+| Constants      | Use named constant objects for domain values        | `SYSTEM_ROLE`, `COMPANY_STATUS`, `WORKSPACE_ROLE`                                                |
+| Unused Params  | Prefix with underscore                              | `_req`, `_res`, `_next`, `_context`                                                              |
+
+## 3. Prisma and Database Naming
+
+Database naming must stay predictable.
+
+| Category          | Rule                             | Example / Notes                             |
+| ----------------- | -------------------------------- | ------------------------------------------- |
+| Prisma Model      | Use PascalCase and singular name | `UserAccount`, `Company`, `WorkspaceMember` |
+| Prisma Enum       | Use PascalCase for enum name     | `SystemRole`, `UserStatus`, `WorkspaceRole` |
+| Prisma Enum Value | Use lowercase values             | `superuser`, `admin`, `active`, `disabled`  |
+| Database Field    | Use camelCase in Prisma schema   | `companyId`, `createdAt`, `isActive`        |
+| ID Field          | Use explicit domain id           | `userAccountId`, `companyId`, `workspaceId` |
+| Join Table Model  | Use domain membership name       | `CompanyMember`, `WorkspaceMember`          |
+| Repository File   | Match domain model name          | `company-member.repository.ts`              |
+| Seed File         | Use timestamp and domain name    | `20260415T165240.company.seed.ts`           |
+
+Good enum example:
+
+```prisma
+enum UserStatus {
+  pending
+  active
+  disabled
+}
+```
+
+Avoid enum values like this:
+
+```prisma
+enum UserStatus {
+  PENDING
+  ACTIVE
+  DISABLED
+}
+```
+
+Reason:
 
 ```txt
-@repo/shared
-@repo/config
-@repo/redis
-@repo/database-access
-@repo/database-inventory
+database enum values should stay simple, stable, and lowercase
+application constants can map them into readable code
 ```
 
-Apps may depend on packages.
+## 4. Comment Style
 
-Packages should not depend on apps.
+Comments should help future developers understand intent quickly.
 
-## 4. Shared Package as Internal SDK
+Use English for day-to-day comments.
 
-`packages/shared` is the internal SDK of the platform.
+Keep comments:
 
-It should contain reusable contracts and utilities such as:
+```txt
+short
+lowercase
+clear
+inline when possible
+focused on why, not only what
+```
+
+Use `;` to separate related statements in one comment.
+
+Good:
+
+```ts
+// validate company scope; prevents cross-company access
+```
+
+```ts
+// normalize payload; empty string should not be stored as value
+```
+
+```ts
+// helper exists to reduce service complexity and noise; pure business logic
+// allowed for mapper, transform, payload builder, normalization, merge state, validation
+// forbidden for side effects, repository and orm access, external sdk, transaction
+// avoid coupling helper to repository return types; prefer explicit local types to reduce maintenance cost
+```
+
+Avoid:
+
+```ts
+// This function is used to validate the company scope because sometimes the user might access another company from the frontend and that is dangerous because the backend needs to make sure the selected company is correct.
+```
+
+Also avoid:
+
+```ts
+// IMPORTANT!!! DO NOT CHANGE THIS 😭🔥
+```
+
+Rules:
+
+```txt
+no emoji
+no emoticon
+no noisy paragraph comments
+no emotional comments
+no unclear comments like "fix later" without context
+```
+
+Better replacement:
+
+```ts
+// temporary compatibility layer; remove after inventory service migrates to new context contract
+```
+
+## 5. Helper Rules
+
+Helpers are allowed, but they must stay clean.
+
+Helpers should reduce service complexity, not hide business flow.
+
+Good use cases:
+
+```txt
+mapper
+transform
+payload builder
+normalization
+merge state
+pure validation
+small business rule extraction
+```
+
+Forbidden use cases:
+
+```txt
+repository access
+orm access
+external sdk call
+transaction
+audit log
+http request
+side effect
+```
+
+Good helper comment:
+
+```ts
+// helper exists to reduce service complexity and noise; pure business logic
+// allowed for mapper, transform, payload builder, normalization, merge state, validation
+// forbidden for side effects, repository and orm access, external sdk, transaction
+// avoid coupling helper to repository return types; prefer explicit local types to reduce maintenance cost
+```
+
+Rule of thumb:
+
+```txt
+if it talks to database, network, filesystem, or external service, it is not a helper
+```
+
+Put that logic in service, repository, or utility based on responsibility.
+
+## 6. Controller, Service, Repository Boundary
+
+Keep backend layers predictable.
+
+| Layer      | Responsibility                                                          | Should Avoid                                         |
+| ---------- | ----------------------------------------------------------------------- | ---------------------------------------------------- |
+| Route      | authorization, validation, controller binding                           | business logic                                       |
+| Controller | read validated input, read context, call service, return response       | repository access, complex branching                 |
+| Service    | business rules, defensive checks, orchestration, DTO mapping, audit log | raw SQL or ORM query details                         |
+| Repository | database query, mutation, transaction                                   | Express request, frontend behavior, route permission |
+| DTO        | response mapping                                                        | business validation                                  |
+| Schema     | request validation                                                      | database query logic                                 |
+| Helper     | pure business utility                                                   | side effects                                         |
+
+Simple backend flow:
+
+```txt
+route -> controller -> service -> repository -> database
+```
+
+Controller example:
+
+```ts
+async detail(req: Request, res: Response) {
+  const request = req as ExpressRequestWithContext
+  const { params } = res.locals.validated
+
+  const data = await this.service.detail(params.companyId, request.context)
+
+  return res.json(HttpResponse.success(req, data))
+}
+```
+
+Service may still perform defensive checks even when middleware already validates access.
+
+This protects the code when routes change later.
+
+## 7. Shared Package Rule
+
+`packages/shared` is the internal SDK.
+
+It should be reusable, modular, and framework-agnostic.
+
+Shared may contain:
 
 ```txt
 types
 constants
-validation schemas
+validation primitives
 error helpers
 response helpers
 normalization utilities
@@ -118,83 +309,47 @@ role mapping helpers
 webhook utilities
 ```
 
-Design rule:
+Shared must not depend on:
 
 ```txt
-shared must be framework-agnostic
-shared must not understand app architecture
-shared must not depend on Express, Next.js, Prisma, or service-specific logic
+Express route behavior
+Next.js page behavior
+Prisma repositories
+service-specific business logic
+frontend-only components
 ```
 
 Good shared content:
 
 ```txt
-Role constants
 RequestContext type
-Http response helper
-Zod primitive schemas
-ErrorResponse helper
-Normalization utility
+SYSTEM_ROLE constant
+PaginationQuerySchema
+ErrorResponse
+Normalization.email()
 ```
 
-Avoid putting this into shared:
+Bad shared content:
 
 ```txt
-Access Service business rules
-Inventory Service business rules
-Express route handlers
-Prisma repository logic
-Frontend component logic
+CompanyService business rule
+Inventory repository query
+React component
+Express controller
 ```
 
-If a utility only makes sense for one service, keep it inside that service.
-
-If it is reusable across multiple apps/packages, move it into shared.
-
-## 5. Database Packages
-
-Database access is separated by domain.
+Rule:
 
 ```txt
-packages/database/access
-packages/database/inventory
-packages/database/seafarer
+if it only makes sense for one app, keep it inside that app
+if it is reusable across apps/packages, consider shared
 ```
 
-Each database package owns:
+## 8. Typecheck Rule
 
-```txt
-Prisma schema
-migrations
-seeders
-Prisma client
-repositories
-database-specific access logic
-```
+Every workspace that contains TypeScript runtime code must have typecheck.
 
-Services should call repositories from the correct database package.
-
-Example:
-
-```txt
-Access Service
--> uses packages/database/access
-
-Inventory Service
--> uses packages/database/inventory
-```
-
-Avoid cross-database foreign keys between service databases.
-
-Use IDs and trusted context snapshots when a downstream service needs references from Access Service.
-
-## 6. Typecheck Rule
-
-We use Turbo-orchestrated typecheck.
-
-Every workspace that contains TypeScript runtime code must have a `typecheck` script.
-
-Add `typecheck` when the package has:
+Add `typecheck` when the workspace has:
 
 ```txt
 tsconfig.json
@@ -204,7 +359,7 @@ runtime code
 code consumed by another app/package
 ```
 
-Example package script:
+Example:
 
 ```json
 {
@@ -214,7 +369,7 @@ Example package script:
 }
 ```
 
-For buildable packages, use the package’s own TypeScript config if needed:
+For buildable packages:
 
 ```json
 {
@@ -224,28 +379,19 @@ For buildable packages, use the package’s own TypeScript config if needed:
 }
 ```
 
-Root typecheck should be orchestrated by Turbo:
+Root command:
 
 ```sh
 pnpm turbo typecheck
 ```
 
-This keeps type safety consistent across apps and packages.
+Do not skip typecheck just because the package is small.
 
-## 7. Environment Rules
+Small packages can still break the monorepo.
 
-The project uses environment-specific `.env` files.
+## 9. Environment and Safety Rules
 
-```txt
-.env.development
-.env.staging
-.env.production
-.env.test
-```
-
-Developers should not use production to test changes.
-
-Use staging for real integration testing.
+Use the correct environment for the correct purpose.
 
 ```txt
 development -> local development
@@ -254,17 +400,11 @@ production  -> real users and real data
 test        -> automated tests
 ```
 
+Developers should not use production for testing changes.
+
 Production credentials, production database, and production services should not be used for experiments.
 
-## 8. Auth Mode
-
-Backend services may use `AUTH_MODE` to control authentication behavior per environment.
-
-```ts
-AUTH_MODE: 'full-bypass' | 'semi-bypass' | 'strict'
-```
-
-Recommended usage:
+Auth mode recommendation:
 
 ```txt
 development -> full-bypass
@@ -272,69 +412,23 @@ staging     -> semi-bypass
 production  -> strict
 ```
 
-Meaning:
-
-```txt
-full-bypass
--> local development only
--> useful when developer needs to work without real auth flow
-
-semi-bypass
--> staging only
--> useful for controlled testing while keeping service boundaries closer to real behavior
-
-strict
--> production
--> real authentication and authorization flow
-```
-
 Production must use strict authentication.
 
-Do not use bypass mode in production.
-
-## 9. Server Deployment Layout
-
-Server deployment folders are separated by layer.
-
-```txt
-/opt/docker
-├── infrastructures-layer
-│   └── edge
-│       └── reverse-proxy
-│
-└── applications-layer
-    ├── intcrews-hub
-    │   ├── api
-    │   │   ├── prod
-    │   │   └── staging
-    │   └── web
-    │       ├── prod
-    │       └── staging
-    └── intcrews-cdn
-```
-
-Simple rule:
-
-```txt
-infrastructures-layer -> shared infrastructure
-applications-layer    -> deployable apps
-```
-
-Keep staging and production separated.
-
-Do not reuse production folders for staging tests.
+Do not enable bypass mode in production.
 
 ## 10. Quick Rules
 
 ```txt
-apps are deployable
-packages are reusable
-shared is internal SDK
-shared must stay framework-agnostic
-database packages own Prisma and repositories
-each TypeScript workspace needs typecheck
-development uses full-bypass
-staging uses semi-bypass
-production uses strict auth
-never test using production data or production credentials
+make route files readable
+keep naming predictable
+use english comments
+keep comments short and lowercase
+do not use emoji or emoticon in code comments
+use lowercase prisma enum values
+keep helpers pure
+keep shared framework-agnostic
+use service for business rules
+use repository for database access
+typecheck every TypeScript workspace
+never test with production data or production credentials
 ```
