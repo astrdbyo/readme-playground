@@ -7,10 +7,10 @@ This document explains how GitHub Actions workflows are used to validate code, b
 The main idea:
 
 ```txt
-build once
-tag clearly
-deploy explicitly
-rollback safely
+Build Once
+Tag Clearly
+Deploy Explicitly
+Rollback Safely
 ```
 
 Production deployment is manual by design.
