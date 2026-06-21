@@ -6,7 +6,7 @@ This document defines the daily engineering rules used in this repository.
 
 Some rules may feel a little strict or slower at first. That is normal. The goal is not to make development harder, but to make the codebase easier to read, easier to continue, and easier to maintain after weeks or months without touching it.
 
-A good system is a system with certainty.
+``A good system is a system with certainty``
 
 When naming, structure, comments, commits, and patterns are predictable, developers spend less energy remembering old context and more energy solving the actual problem.
 
