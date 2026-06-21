@@ -14,8 +14,6 @@ Nginx validation and reload
 Nginx basic-auth password update
 ```
 
-##  
-
 ## 🐳 Postgres Docker Compose Sample
 
 ```yml
