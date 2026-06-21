@@ -8,8 +8,8 @@ It covers:
 
 ```txt
 Postgres Docker Compose sample
-server folder structure
-container recreation without rebuild
+Server folder structure
+Container recreation without rebuild
 Nginx validation and reload
 Nginx basic-auth password update
 ```
@@ -53,8 +53,6 @@ Run the stack:
 docker compose --env-file .env.production up -d
 ```
 
-##  
-
 ## 📁 Server Folder Structure for Applications
 
 ```sh
@@ -69,8 +67,6 @@ docker compose --env-file .env.production up -d
 │           ├── prod
 │           └── staging
 ```
-
-##  
 
 ## 🔁 Recreate Container With Existing Image
 
@@ -100,8 +96,6 @@ For staging environment:
 docker compose --env-file .env.staging up -d --no-deps --force-recreate api
 ```
 
-##  
-
 ## 🌐 Nginx Validation and Reload
 
 Validate Nginx configuration:
@@ -115,9 +109,6 @@ Reload Nginx:
 ```sh
 docker exec -it ics-infra-edge-nginx nginx -s reload
 ```
-
-##  
-
 ## 🔐 Update Nginx Basic Auth Password
 
 Go to the reverse proxy folder:
@@ -140,8 +131,6 @@ docker run --rm \
   httpd:2.4-alpine \
   sh -c "htpasswd -bB /output/staging-aii-hub-api.htpasswd qauser NewPassword123"
 ```
-
-##  
 
 ## ✅ Quick Checklist
 
