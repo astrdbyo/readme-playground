@@ -1,433 +1,525 @@
 [← Back to Main README](../README.md)
 
-# Development Rules
+# CI/CD Workflow Guide
 
-This document defines the daily engineering agreement used in this repository.
+This document explains how GitHub Actions workflows are used to validate code, build Docker images, deploy to staging, promote to production, switch traffic, and support rollback.
 
-These rules are not here to make development feel harder. Some of them may feel strict at first, but the goal is simple: make the codebase easier to read, easier to continue, and easier to maintain after weeks or months without touching it.
-
-> [!TIP]
-> A good system gives people certainty.
-
-When naming, structure, comments, commits, and patterns are predictable, developers spend less energy remembering old context and more energy solving the actual problem.
-
-These rules exist to help the team:
+The main idea:
 
 ```txt
-Read Code Faster
-Remember Old Code Faster
-Reduce Unclear Patterns
-Reduce Maintenance Stress
-Avoid Repeated Decision-Making
-Make Onboarding Easier
+build once
+tag clearly
+deploy explicitly
+rollback safely
 ```
 
-Use this document as a shared team agreement.
+Production deployment is manual by design.
 
-Some rules are mandatory. Some are recommended. Some are things we should avoid. The purpose is not to blame people for small mistakes, but to keep the project comfortable for everyone who has to work with it later.
+## 1. Purpose
 
-## 1. Rule Levels
-
-| Level       | Meaning                                                                     |
-| ----------- | --------------------------------------------------------------------------- |
-| Mandatory   | Must be followed because it affects consistency, safety, or maintainability |
-| Recommended | Strongly preferred, but can be adjusted when there is a clear reason        |
-| Avoid       | Not always forbidden, but should not become the default pattern             |
-
-Simple rule:
+This repository uses GitHub Actions to support a predictable delivery flow:
 
 ```txt
-If a pattern makes the code easier to read later, follow it
-If a pattern creates confusion later, avoid it
+validate code before merge
+build Docker images
+publish images to GHCR
+deploy specific image tags to staging
+promote verified images to production
+switch production traffic using Nginx
+rollback to known-good images when needed
 ```
 
-## 2. Commit Message Rules
-
-Commit messages must use this format:
-
-```sh
-type: subject
-```
-
-Allowed commit types:
+The workflows are also connected to release and versioning semantics.
 
 ```txt
-feat
-fix
-chore
-refactor
-docs
-test
+CI creates the image tag
+deployment uses the image tag
+rollback returns to an older image tag
 ```
 
-| Rule                         | Level       |
-| ---------------------------- | ----------- |
-| Use allowed commit type      | Mandatory   |
-| Include subject              | Mandatory   |
-| Do not use scope             | Mandatory   |
-| Keep subject short and clear | Recommended |
+Without clear image tags, rollback becomes guesswork.
 
-Valid examples:
-
-```sh
-feat: add company member endpoint
-fix: prevent workspace member role mismatch
-docs: update route usage guideline
-refactor: simplify user repository scope
-test: add company service unit tests
-chore: update dependencies
-```
-
-Invalid examples:
-
-```sh
-feat(api): add new endpoint
-fix
-docs:
-```
-
-## 3. Naming Conventions
-
-Naming should make the project easy to scan.
-
-A developer should be able to understand the responsibility of a folder, file, class, or function without opening too many files.
-
-| Category       | Rule                                                | Level       | Example / Notes                                                                                  |
-| -------------- | --------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------ |
-| Folder Naming  | Use plural names for grouped responsibility folders | Recommended | `controllers/`, `services/`, `repositories/`, `schemas/`, `middlewares/`                         |
-| Folder Naming  | Use lowercase                                       | Mandatory   | `middleware/`, `database/`, `shared/`                                                            |
-| Folder Naming  | Use hyphen for multi-word folders                   | Recommended | `access-service/`, `inventory-service/`                                                          |
-| Folder Naming  | Use `lib/` for local shared modules inside one app  | Recommended | `lib/dto/`, `lib/helper/`, `lib/utils/`                                                          |
-| App Naming     | Use domain or deployable service name               | Mandatory   | `api-gateway`, `access-service`, `inventory-service`                                             |
-| Package Naming | Use clear internal package names                    | Mandatory   | `@repo/shared`, `@repo/config`, `@repo/database-access`                                          |
-| File Naming    | Use lowercase                                       | Mandatory   | `user.controller.ts`, `company.schema.ts`                                                        |
-| File Naming    | Use suffix based on responsibility                  | Mandatory   | `.controller.ts`, `.svc.ts`, `.repository.ts`, `.schema.ts`, `.dto.ts`, `.helper.ts`, `.util.ts` |
-| File Naming    | Use `svc` for service files                         | Mandatory   | `user.svc.ts`, `company.svc.ts`                                                                  |
-| File Naming    | Use hyphen when file names become long              | Recommended | `company-member.dto.ts`, `workspace-member.repository.ts`                                        |
-| File Naming    | Avoid excessive generic `index.ts` usage            | Recommended | Prefer `index.shared.ts`, `index.database.access.ts` when clarity helps                          |
-| Variables      | Use explicit names                                  | Mandatory   | `userAccountId`, `companyId`, `isActive`, `accessToken`                                          |
-| Variables      | Avoid unclear single-letter names in business logic | Avoid       | Avoid `x`, `e`, `r`                                                                              |
-| Variables      | Short names are allowed in small local scope        | Recommended | `i` in loops, `tx` in transactions, `item` in callbacks                                          |
-| Functions      | Use camelCase                                       | Mandatory   | `createUser()`, `getCompanyDetail()`                                                             |
-| Functions      | Use verbs for actions                               | Recommended | `validatePayload()`, `resolveExecution()`, `mapToResponse()`                                     |
-| Classes        | Use PascalCase                                      | Mandatory   | `UserController`, `CompanyService`, `UserRepository`                                             |
-| Classes        | One class should represent one responsibility       | Recommended | Avoid generic names like `Manager` or `Handler` without context                                  |
-| Types          | Use PascalCase                                      | Mandatory   | `CreateUserDTO`, `CompanyMemberPayload`                                                          |
-| Types          | Use semantic suffixes                               | Recommended | `DTO`, `Payload`, `Response`, `Result`, `Context`                                                |
-| Interfaces     | Interface prefix `I` is allowed when useful         | Recommended | `IUserPublic`, `IUserPrivate`                                                                    |
-| Constants      | Use UPPER_SNAKE_CASE for true constants             | Mandatory   | `MAX_RETRY_COUNT`, `DEFAULT_TIMEOUT`                                                             |
-| Constants      | Use named constant objects for domain values        | Recommended | `SYSTEM_ROLE`, `COMPANY_STATUS`, `WORKSPACE_ROLE`                                                |
-| Unused Params  | Prefix with underscore                              | Recommended | `_req`, `_res`, `_next`, `_context`                                                              |
-
-## 4. Prisma and Database Naming
-
-Database naming must stay predictable because schema changes are expensive and long-lived.
-
-| Category          | Rule                             | Level       | Example / Notes                             |
-| ----------------- | -------------------------------- | ----------- | ------------------------------------------- |
-| Prisma Model      | Use PascalCase and singular name | Mandatory   | `UserAccount`, `Company`, `WorkspaceMember` |
-| Prisma Enum       | Use PascalCase for enum name     | Mandatory   | `SystemRole`, `UserStatus`, `WorkspaceRole` |
-| Prisma Enum Value | Use lowercase values             | Mandatory   | `superuser`, `admin`, `active`, `disabled`  |
-| Database Field    | Use camelCase in Prisma schema   | Mandatory   | `companyId`, `createdAt`, `isActive`        |
-| ID Field          | Use explicit domain id           | Mandatory   | `userAccountId`, `companyId`, `workspaceId` |
-| Join Table Model  | Use domain membership name       | Recommended | `CompanyMember`, `WorkspaceMember`          |
-| Repository File   | Match domain model name          | Recommended | `company-member.repository.ts`              |
-| Seed File         | Use timestamp and domain name    | Recommended | `20260415T165240.company.seed.ts`           |
-
-Good enum example:
-
-```prisma
-enum UserStatus {
-  pending
-  active
-  disabled
-}
-```
-
-Avoid enum values like this:
-
-```prisma
-enum UserStatus {
-  PENDING
-  ACTIVE
-  DISABLED
-}
-```
-
-Reason:
+## 2. High-Level Workflow
 
 ```txt
-database enum values should stay simple, stable, and lowercase
-application constants can map them into readable code
+Developer
+  │
+  ▼
+Pull Request
+  │
+  ▼
+01 - Pre-Merge Code Validation Checks
+  │
+  ▼
+Merge to staging
+  │
+  ▼
+02 - Build & Publish Images to GHCR
+  │
+  ▼
+Manual staging deploy
+  │
+  ├── 03 - Deploy API to Staging
+  └── 04 - Deploy Web to Staging
+  │
+  ▼
+Manual promote to production
+  │
+  ├── 05 - Promote API to Production
+  └── 06 - Promote Web to Production
+  │
+  ▼
+Switch production traffic
+  │
+  └── 96 - Switch Production Traffic via Nginx
+  │
+  ▼
+Rollback when needed
+  │
+  ├── 99 - Rollback API Production
+  └── 100 - Rollback Web Production
 ```
 
-## 5. Comment Style
+## 3. CI/CD and Image Tag Semantics
 
-Comments should help future developers understand intent quickly.
+Workflow `02` builds Docker images and publishes them to GHCR.
 
-Use English for day-to-day comments.
-
-| Rule                                                           | Level       |
-| -------------------------------------------------------------- | ----------- |
-| Keep comments short and clear                                  | Recommended |
-| Use lowercase comments                                         | Recommended |
-| Prefer inline comments when possible                           | Recommended |
-| Explain why, not only what                                     | Recommended |
-| Use `;` to separate related statements in one comment          | Recommended |
-| Do not use emoji or emoticon in code comments                  | Avoid       |
-| Do not write noisy paragraph comments                          | Avoid       |
-| Do not leave unclear comments like `fix later` without context | Avoid       |
-
-Good:
-
-```ts
-// validate company scope; prevents cross-company access
-```
-
-```ts
-// normalize payload; empty string should not be stored as value
-```
-
-```ts
-// helper exists to reduce service complexity and noise; pure business logic
-// allowed for mapper, transform, payload builder, normalization, merge state, validation
-// forbidden for side effects, repository and orm access, external sdk, transaction
-// avoid coupling helper to repository return types; prefer explicit local types to reduce maintenance cost
-```
-
-Avoid:
-
-```ts
-// This function is used to validate the company scope because sometimes the user might access another company from the frontend and that is dangerous because the backend needs to make sure the selected company is correct.
-```
-
-Also avoid:
-
-```ts
-// IMPORTANT!!! DO NOT CHANGE THIS 😭🔥
-```
-
-Better replacement:
-
-```ts
-// temporary compatibility layer; remove after inventory service migrates to new context contract
-```
-
-## 6. Helper Rules
-
-Helpers are allowed, but they must stay clean.
-
-Helpers should reduce service complexity, not hide business flow.
-
-Good helper use cases:
+Each image gets two types of tags:
 
 ```txt
-mapper
-transform
-payload builder
-normalization
-merge state
-pure validation
-small business rule extraction
-```
-
-Avoid using helpers for:
-
-```txt
-repository access
-orm access
-external sdk call
-transaction
-audit log
-http request
-side effect
-```
-
-Rule of thumb:
-
-```txt
-if it talks to database, network, filesystem, or external service, it is not a helper
-```
-
-Put that logic in service, repository, or utility based on responsibility.
-
-## 7. Controller, Service, Repository Boundary
-
-Keep backend layers predictable.
-
-| Layer      | Responsibility                                                          | Should Avoid                                         |
-| ---------- | ----------------------------------------------------------------------- | ---------------------------------------------------- |
-| Route      | authorization, validation, controller binding                           | business logic                                       |
-| Controller | read validated input, read context, call service, return response       | repository access, complex branching                 |
-| Service    | business rules, defensive checks, orchestration, DTO mapping, audit log | raw SQL or ORM query details                         |
-| Repository | database query, mutation, transaction                                   | Express request, frontend behavior, route permission |
-| DTO        | response mapping                                                        | business validation                                  |
-| Schema     | request validation                                                      | database query logic                                 |
-| Helper     | pure business utility                                                   | side effects                                         |
-
-Simple backend flow:
-
-```txt
-route -> controller -> service -> repository -> database
-```
-
-Controller example:
-
-```ts
-async detail(req: Request, res: Response) {
-  const request = req as ExpressRequestWithContext
-  const { params } = res.locals.validated
-
-  const data = await this.service.detail(params.companyId, request.context)
-
-  return res.json(HttpResponse.success(req, data))
-}
-```
-
-Service may still perform defensive checks even when middleware already validates access.
-
-This protects the code when routes change later.
-
-## 8. Shared Package Rule
-
-`packages/shared` is the internal SDK.
-
-It should be reusable, modular, and framework-agnostic.
-
-Shared may contain:
-
-```txt
-types
-constants
-validation primitives
-error helpers
-response helpers
-normalization utilities
-request context contracts
-role mapping helpers
-webhook utilities
-```
-
-Shared must not depend on:
-
-```txt
-Express route behavior
-Next.js page behavior
-Prisma repositories
-service-specific business logic
-frontend-only components
-```
-
-Good shared content:
-
-```txt
-RequestContext type
-SYSTEM_ROLE constant
-PaginationQuerySchema
-ErrorResponse
-Normalization.email()
-```
-
-Bad shared content:
-
-```txt
-CompanyService business rule
-Inventory repository query
-React component
-Express controller
-```
-
-Rule:
-
-```txt
-if it only makes sense for one app, keep it inside that app
-if it is reusable across apps/packages, consider shared
-```
-
-## 9. Typecheck Rule
-
-Every workspace that contains TypeScript runtime code must have typecheck.
-
-Add `typecheck` when the workspace has:
-
-```txt
-tsconfig.json
-src/
-.ts or .tsx files
-runtime code
-code consumed by another app/package
+moving tag     -> staging
+immutable tag  -> sha-xxxxxxx
 ```
 
 Example:
 
-```json
-{
-  "scripts": {
-    "typecheck": "tsc --noEmit"
-  }
-}
+```txt
+ghcr.io/<owner>/<repo>/api:staging
+ghcr.io/<owner>/<repo>/api:sha-3dfd762
+
+ghcr.io/<owner>/<repo>/web:staging
+ghcr.io/<owner>/<repo>/web:sha-3dfd762
 ```
 
-For buildable packages:
+Meaning:
 
-```json
-{
-  "scripts": {
-    "typecheck": "tsc -p tsconfig.json --noEmit"
-  }
-}
+```txt
+staging
+-> moving tag
+-> points to latest staging build
+
+sha-3dfd762
+-> immutable tag
+-> points to a specific commit
+-> useful for deployment, promotion, and rollback
 ```
 
-Root command:
+Use SHA tags when deploying to staging or production if you need traceability.
+
+Avoid using `latest` for staging or production.
+
+## 4. Workflow List
+
+| No  | Workflow                         | Purpose                                         | Trigger                         |
+| --- | -------------------------------- | ----------------------------------------------- | ------------------------------- |
+| 01  | Pre-Merge Code Validation Checks | Validate code before merge                      | Pull request / protected branch |
+| 02  | Build & Publish Images to GHCR   | Build and push Docker images                    | Push to `staging`               |
+| 03  | Deploy API to Staging            | Deploy specific API image to staging            | Manual                          |
+| 04  | Deploy Web to Staging            | Deploy specific Web image to staging            | Manual                          |
+| 05  | Promote API to Production        | Deploy verified API image to production slot    | Manual                          |
+| 06  | Promote Web to Production        | Deploy verified Web image to production slot    | Manual                          |
+| 96  | Switch Production Traffic        | Switch active production slot through Nginx     | Manual                          |
+| 98  | Cleanup Staging Environment      | Stop staging containers and clean unused images | Manual                          |
+| 99  | Rollback API Production          | Rollback API to older image tag                 | Manual                          |
+| 100 | Rollback Web Production          | Rollback Web to older image tag                 | Manual                          |
+
+## 5. Workflow Responsibilities
+
+### 01 - Pre-Merge Code Validation Checks
+
+Purpose:
+
+```txt
+make sure only valid code is merged
+```
+
+Usually runs:
+
+```txt
+install dependencies
+lint
+typecheck
+test
+build
+```
+
+Result:
+
+```txt
+fail -> merge should be blocked
+pass -> code is safe to merge
+```
+
+### 02 - Build & Publish Images to GHCR
+
+Purpose:
+
+```txt
+create Docker images that can be deployed later
+```
+
+Trigger:
+
+```txt
+push to staging branch
+```
+
+What it does:
+
+```txt
+checkout repository
+setup Docker Buildx
+login to GHCR
+generate short SHA tag
+build Web image
+build API image
+push staging tag
+push SHA tag
+```
+
+Example output:
+
+```txt
+api:staging
+api:sha-a1b2c3d
+web:staging
+web:sha-a1b2c3d
+```
+
+The SHA tag is the important part for rollback.
+
+### 03 - Deploy API to Staging
+
+Purpose:
+
+```txt
+deploy a specific API image to staging
+```
+
+Trigger:
+
+```txt
+manual workflow_dispatch
+```
+
+Input:
+
+```txt
+image_sha
+```
+
+Example:
+
+```txt
+sha-a1b2c3d
+```
+
+What it does:
+
+```txt
+connect to server through Tailscale
+login to GHCR
+go to staging API compose folder
+update IMAGE_TAG in .env.staging
+pull selected image
+restart API container
+cleanup unused images
+```
+
+### 04 - Deploy Web to Staging
+
+Same idea as workflow `03`, but for Web.
+
+### 05 - Promote API to Production
+
+Purpose:
+
+```txt
+deploy a verified API image into a production blue/green slot
+```
+
+Trigger:
+
+```txt
+manual workflow_dispatch
+```
+
+Inputs:
+
+```txt
+image_sha
+slot: blue or green
+```
+
+What it does:
+
+```txt
+connect to production server
+login to GHCR
+go to production API compose folder
+update IMAGE_TAG_BLUE or IMAGE_TAG_GREEN
+pull selected image
+start selected slot container
+cleanup unused images
+```
+
+Important:
+
+```txt
+promotion deploys the container
+traffic switching is handled separately by workflow 96
+```
+
+### 06 - Promote Web to Production
+
+Same idea as workflow `05`, but for Web.
+
+### 96 - Switch Production Traffic via Nginx
+
+Purpose:
+
+```txt
+switch live traffic to blue or green
+```
+
+Trigger:
+
+```txt
+manual workflow_dispatch
+```
+
+Input:
+
+```txt
+slot: blue or green
+```
+
+What it does:
+
+```txt
+connect to production server
+write active slot config
+validate Nginx config
+reload Nginx
+```
+
+This separates deployment from traffic switching.
+
+That separation is important because a container can be deployed and checked before receiving live traffic.
+
+### 98 - Cleanup Staging Environment
+
+Purpose:
+
+```txt
+clean staging containers and unused images safely
+```
+
+This should not touch production.
+
+### 99 - Rollback API Production
+
+Purpose:
+
+```txt
+rollback API production to a previous known-good image tag
+```
+
+Rollback uses the same deployment mechanism as promotion, but with an older SHA.
+
+Example:
+
+```txt
+current broken image: sha-bad1234
+previous stable image: sha-good567
+rollback target: sha-good567
+```
+
+### 100 - Rollback Web Production
+
+Same idea as workflow `99`, but for Web.
+
+## 6. Blue/Green Deployment Support
+
+The current workflow and Docker Compose structure already support a blue/green deployment model.
+
+Concept:
+
+```txt
+blue  -> one production slot
+green -> another production slot
+```
+
+Example:
+
+```txt
+api-blue  -> sha-oldgood
+api-green -> sha-newcandidate
+```
+
+The purpose of blue/green deployment is:
+
+```txt
+deploy new version into inactive slot
+verify the new slot
+switch traffic when ready
+rollback by switching traffic back
+```
+
+In this repository:
+
+```txt
+05 / 06 deploy image to selected production slot
+96 switches live traffic through Nginx
+99 / 100 rollback by deploying older image tag
+```
+
+Important note:
+
+```txt
+full blue/green requires clear traffic switching
+```
+
+If the promotion workflow stops the opposite slot immediately, the setup is closer to slot-based deployment with blue/green naming.
+
+For full zero-downtime blue/green later:
+
+```txt
+keep old slot running
+start new slot
+verify new slot
+switch traffic using workflow 96
+stop old slot only after confirmation
+```
+
+The current structure is already a good foundation. The operational procedure can be improved later when monitoring, resources, and team readiness are stronger.
+
+## 7. Staging vs Production Behavior
+
+| Environment | Behavior                                        |
+| ----------- | ----------------------------------------------- |
+| Staging     | Used for integration testing                    |
+| Staging     | Can deploy latest staging image or specific SHA |
+| Staging     | Safe place to verify image before production    |
+| Production  | Manual only                                     |
+| Production  | Should use verified SHA                         |
+| Production  | Should not deploy automatically from push       |
+| Production  | Traffic switching should be explicit            |
+
+Simple rule:
+
+```txt
+staging proves the image
+production runs the approved image
+```
+
+## 8. Deployment and Rollback Relationship
+
+Deployment and rollback use the same basic mechanism:
+
+```txt
+choose image tag
+update env value
+pull image
+recreate container
+verify service
+```
+
+Deployment usually uses a new SHA.
+
+Rollback uses an older known-good SHA.
+
+Example:
 
 ```sh
-pnpm turbo typecheck
+export IMAGE_TAG=sha-good567
+docker compose --env-file .env.production up -d --no-deps --force-recreate api
 ```
 
-Do not skip typecheck just because the package is small.
+This is why workflow `02` must always push immutable SHA tags.
 
-Small packages can still break the monorepo.
-
-## 10. Environment and Safety Rules
-
-Use the correct environment for the correct purpose.
+## 9. Key Principles
 
 ```txt
-development -> local development
-staging     -> real integration testing
-production  -> real users and real data
-test        -> automated tests
+CI is not the same as deployment
+build once, deploy many times
+production deployment is manual
+SHA is the source of truth for build identity
+staging is for verification
+production is for approved images
+blue/green separates deployment from traffic
+Nginx controls live traffic switching
+rollback requires known-good image tags
+one workflow should have one responsibility
 ```
 
-Developers should not use production for testing changes.
+## 10. When to Use Which Workflow
 
-Production credentials, production database, and production services should not be used for experiments.
+| Situation                            | Workflow |
+| ------------------------------------ | -------- |
+| Validate pull request                | 01       |
+| Build Docker images                  | 02       |
+| Deploy API to staging                | 03       |
+| Deploy Web to staging                | 04       |
+| Promote API image to production slot | 05       |
+| Promote Web image to production slot | 06       |
+| Switch live production traffic       | 96       |
+| Cleanup staging                      | 98       |
+| Rollback API production              | 99       |
+| Rollback Web production              | 100      |
 
-Auth mode recommendation:
+## 11. Recommended Operator Checklist
+
+Before deploying:
 
 ```txt
-development -> full-bypass
-staging     -> semi-bypass
-production  -> strict
+confirm image SHA
+confirm target environment
+confirm target service
+confirm slot if production
+confirm database migration risk
+confirm rollback image
 ```
 
-Production must use strict authentication.
-
-Do not enable bypass mode in production.
-
-## Quick Rules
+After deploying:
 
 ```txt
-make route files readable
-keep naming predictable
-use english comments
-keep comments short and lowercase
-do not use emoji or emoticon in code comments
-use lowercase prisma enum values
-keep helpers pure
-keep shared framework-agnostic
-use service for business rules
-use repository for database access
-typecheck every TypeScript workspace
-never test with production data or production credentials
+check container status
+check logs
+check health endpoint
+check Nginx config if traffic switch is involved
+confirm application behavior
+```
+
+Useful commands:
+
+```sh
+docker ps
+docker compose ps
+docker compose logs -f
+docker images
+```
+
+## 12. Quick Summary
+
+```txt
+workflow 01 protects code quality
+workflow 02 creates image artifacts
+workflow 03 and 04 deploy staging
+workflow 05 and 06 promote to production slots
+workflow 96 switches production traffic
+workflow 99 and 100 rollback using older SHA
+image SHA connects CI/CD with versioning
+blue/green is already supported structurally
+full blue/green operation can be improved over time
 ```
