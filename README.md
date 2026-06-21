@@ -13,12 +13,12 @@ When naming, structure, comments, commits, and patterns are predictable, develop
 These rules exist to help the team:
 
 ```txt
-read code faster
-remember old code faster
-reduce unclear patterns
-reduce maintenance stress
-avoid repeated decision-making
-make onboarding easier
+Read Code Faster
+Remember Old Code Faster
+Reduce Unclear Patterns
+Reduce Maintenance Stress
+Avoid Repeated Decision-Making
+Make Onboarding Easier
 ```
 
 ## 1. Commit Message Rules
