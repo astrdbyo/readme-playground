@@ -37,8 +37,8 @@ Some rules are mandatory. Some are recommended. Some are things we should avoid.
 Simple rule:
 
 ```txt
-if a pattern makes the code easier to read later, follow it
-if a pattern creates confusion later, avoid it
+If a pattern makes the code easier to read later, follow it
+If a pattern creates confusion later, avoid it
 ```
 
 ## 2. Commit Message Rules
